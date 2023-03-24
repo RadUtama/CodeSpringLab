@@ -1,0 +1,7 @@
+sample	treatment	filename
+control_1	control	control1_R1_001.fastq.gz,control1_R2_001.fastq.gz
+control_2	control	control2_R1_001.fastq.gz,control2_R2_001.fastq.gz
+control_3	control	control3_R1_001.fastq.gz,control3_R2_001.fastq.gz
+treated_1	treated	treated1_R1_001.fastq.gz,treated1_R2_001.fastq.gz
+treated_2	treated	treated2_R1_001.fastq.gz,treated2_R2_001.fastq.gz
+treated_3	treated	treated3_R1_001.fastq.gz,treated3_R2_001.fastq.gz
