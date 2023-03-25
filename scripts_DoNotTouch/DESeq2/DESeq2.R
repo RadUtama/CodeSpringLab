@@ -10,7 +10,7 @@ refcond <- args[4]
 compared <- args[5]
 
 count <- read.delim(args[1],sep="",row.names = 1,check.names=FALSE)
-design <- read.delim(args[2],header=T,sep="",row.names = 1,check.names=FALSE)
+design <- read.delim(args[2],header=T,sep="\t",row.names = 1,check.names=FALSE)
 design <- design[1:(ncol(design)-1)]
 
 for (i in 1:length(colnames(design))){
