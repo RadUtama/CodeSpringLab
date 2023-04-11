@@ -196,6 +196,8 @@ def filetransfer_Copy(read_path_original,scriptpath_copy):
     print(job)
     jobid.append(job[0].split(' ')[2])
     
+    rmhidden = [shutil.rmtree(f) for f in os.listdir("../../csl_results/"+project_name+"/data/fastq") if f.startswith(".")]
+    
     return jobid
 
 def filetransfer_ListDest(directory):
