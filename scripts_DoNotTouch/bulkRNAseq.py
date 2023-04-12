@@ -185,7 +185,6 @@ def filetransfer_PrepDirect():
 
 def filetransfer_Copy(read_path_original,scriptpath_copy):
     
-    global project_name
     if os.path.exists("../../csl_results/"+project_name+"/data/fastq") :
         shutil.rmtree("../../csl_results/"+project_name+"/data/fastq")
     
@@ -196,11 +195,11 @@ def filetransfer_Copy(read_path_original,scriptpath_copy):
     print(job)
     jobid.append(job[0].split(' ')[2])
     
-    rmhidden = [shutil.rmtree(f) for f in os.listdir("../../csl_results/"+project_name+"/data/fastq") if f.startswith(".")]
-    
     return jobid
 
 def filetransfer_ListDest(directory):
+    
+    global project_name
     
     print("Here's the list of contents:")
     print("Index")
@@ -210,6 +209,8 @@ def filetransfer_ListDest(directory):
     print(dirlist)
     
     dirfileset = directory + dirlist
+    
+    rmhidden = [shutil.rmtree(f) for f in os.listdir("../../csl_results/"+project_name+"/data/fastq") if f.startswith(".")]
     
     return dirfileset
 
