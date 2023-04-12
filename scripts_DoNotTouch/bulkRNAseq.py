@@ -185,6 +185,7 @@ def filetransfer_PrepDirect():
 
 def filetransfer_Copy(read_path_original,scriptpath_copy):
     
+    global project_name
     if os.path.exists("../../csl_results/"+project_name+"/data/fastq") :
         shutil.rmtree("../../csl_results/"+project_name+"/data/fastq")
     
