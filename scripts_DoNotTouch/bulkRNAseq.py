@@ -8,6 +8,7 @@ from IPython.display import IFrame,clear_output
 import shutil
 import seaborn as sns
 import matplotlib.pyplot as plt
+from pandas import DataFrame
 
 project_name=config.project_name
 
@@ -281,12 +282,23 @@ def fastqc_RunQC(readlist,outdir_fastqc,read_path_destination,scriptpath_fastqc)
     
     return jobid
 
+def fastqc_ListDir(outdir_fastqc):
+    
+    dirlist = pd.Series(os.listdir(outdir_fastqc))
+    dirlist = dirlist[dirlist.str.endswith('.html')]
+    dirlist.index = range(len(dirlist))
+    
+    DataFrame(dirlist).to_html(outdir_fastqc+'/QC_list.html')
+    dir_html = IFrame(outdir_fastqc+'/QC_list.html', width=1000, height=800)
+    
+    return dir_html
+
 def fastqc_Visualization(outdir_fastqc):
 
     dirlist = pd.Series(os.listdir(outdir_fastqc))
     dirlist = dirlist[dirlist.str.endswith('.html')]
     dirlist.index = range(len(dirlist))
-    print(dirlist)
+    #print(dirlist)
     
     print("Specify index to visualize HTML file:(e.g 0)")
     index_files = int(input())    
