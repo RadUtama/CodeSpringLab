@@ -9,15 +9,27 @@ outpath <- args[3]
 refcond <- args[4]
 compared <- args[5]
 
-count <- read.delim(args[1],sep="",row.names = 1,check.names=FALSE)
+#count <- read.delim(args[1],sep="",row.names = 1,check.names=FALSE)
+count <- read.delim(args[1],sep="",row.names = NULL,check.names=FALSE)
+modsum <- as.formula(paste(".~",colnames(count)[1],sep=""))
+count <- aggregate(modsum,count,sum)
+row.names(count) <- count[,1]
+count[,1] <- NULL
+
 design <- read.delim(args[2],header=T,sep="\t",row.names = 1,check.names=FALSE)
 design <- design[1:(ncol(design)-1)]
+
+overlap<-intersect(row.names(design),colnames(count))
+
+count <- count[,overlap]
+design_header<-colnames(design)
+design <- as.data.frame(design[overlap,])
+row.names(design)<-overlap
+colnames(design)<-design_header
 
 for (i in 1:length(colnames(design))){
     design[,i] <-factor(design[,i])
 }
-    
-count <- count[,row.names(design)]
 
 for (i in 1:length(colnames(design))){
   if (i == 1){
@@ -26,6 +38,7 @@ for (i in 1:length(colnames(design))){
     model <- paste(model,"+",colnames(design)[i])
   }
 }
+
 formula <- as.formula(model)
 
 dds <- DESeqDataSetFromMatrix(countData = count,colData = design,design = formula)
