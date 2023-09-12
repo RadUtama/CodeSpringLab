@@ -1,5 +1,6 @@
 library("DESeq2")
 
+library(dplyr)
 library(ggplot2)
 #library(EnhancedVolcano)
 
@@ -17,6 +18,7 @@ row.names(count) <- count[,1]
 count[,1] <- NULL
 
 design <- read.delim(args[2],header=T,sep="\t",row.names = 1,check.names=FALSE)
+design <- design %>% filter_all(any_vars(. %in% c(refcond,compared)))
 design <- design[1:(ncol(design)-1)]
 
 overlap<-intersect(row.names(design),colnames(count))
