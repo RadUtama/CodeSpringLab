@@ -74,7 +74,8 @@ normalized_counts<-as.data.frame(counts(dds, normalized=TRUE))
 normalized_counts$DESCRIPTION <- 'na'
 normalized_counts<-normalized_counts[,c(ncol(normalized_counts),1:ncol(normalized_counts)-1)]
 
-write.table(normalized_counts, file=paste(outpath,"/normalized_counts.txt",sep=""), sep="\t", quote=F, col.names=NA)
+#write.table(normalized_counts, file=paste(outpath,"/normalized_counts.txt",sep=""), sep="\t", quote=F, col.names=NA)
+write.table(normalized_counts, file=paste(outpath,"/normalized_counts_",compared,"_vs_",refcond,"(ref).txt",sep=""), sep="\t", quote=F, col.names=NA)
 
 resultsNames(dds)
 
