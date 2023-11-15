@@ -659,7 +659,7 @@ def visualization_heatmap(inpath_design,outpath,refcond,compared):
         lut = dict(zip(design.iloc[:,i].unique(), sns.color_palette("Pastel2")))
         col_colors = design.iloc[:,i].map(lut)
         heat = sns.clustermap(count_norm_sig,z_score=0,cmap='vlag',col_colors=col_colors)
-        heat.savefig(outpath+"/heatmap_"+design.columns[i]+".png")
+        heat.savefig(outpath+"/heatmap_"+design.columns[i]+"_"+compared+'_vs_'+refcond+'(ref).png')
 
     return heat
 
