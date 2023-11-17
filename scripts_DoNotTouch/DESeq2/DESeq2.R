@@ -97,8 +97,8 @@ png(paste(outpath,'/volcano_',compared,"_vs_",refcond,'(ref).png',sep=""),units=
 
 resLFC_data<-data.frame(resLFC)
 resLFC_data$diffexpressed <- "NO"
-resLFC_data$diffexpressed[resLFC_data$log2FoldChange > 1 & resLFC_data$pvalue < 0.000001] <- "UP"
-resLFC_data$diffexpressed[resLFC_data$log2FoldChange < -1 & resLFC_data$pvalue < 0.000001] <- "DOWN"
+resLFC_data$diffexpressed[resLFC_data$log2FoldChange > 0 & resLFC_data$padj < 0.05] <- "UP"
+resLFC_data$diffexpressed[resLFC_data$log2FoldChange < 0 & resLFC_data$padj < 0.05] <- "DOWN"
 resLFC_data$delabel <- NA
 resLFC_data <- resLFC_data[order(resLFC_data$padj),]
 resLFC_data$delabel[1:50]<-rownames(resLFC_data)[1:50]
