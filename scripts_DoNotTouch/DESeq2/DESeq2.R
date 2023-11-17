@@ -3,6 +3,7 @@ library("DESeq2")
 library(dplyr)
 library(ggplot2)
 #library(EnhancedVolcano)
+library(ggrepel)
 
 args = commandArgs(trailingOnly=TRUE)
 
@@ -54,7 +55,7 @@ for (i in 1:length(colnames(design))){
 png(paste(outpath,'/pca_',colnames(design)[i],'_',compared,"_vs_",refcond,'(ref).png',sep=""),units="in", width=5, height=5, res=300,type="cairo")
 vsdata <- vst(dds, blind=FALSE)
 pca<-plotPCA(vsdata, intgroup=colnames(design)[i])+theme(aspect.ratio = 1)
-pca<-pca+geom_text(label=rownames(design),color="black",nudge_x=0.5,nudge_y=0.3,size=2)
+pca<-pca+geom_text_repel(label=rownames(design),color="black",size=2)+labs(title = "geom_text_repel()")
 print(pca)
 dev.off()
   
