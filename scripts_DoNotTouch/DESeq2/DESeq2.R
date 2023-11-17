@@ -53,8 +53,8 @@ for (i in 1:length(colnames(design))){
 
 png(paste(outpath,'/pca_',colnames(design)[i],'_',compared,"_vs_",refcond,'(ref).png',sep=""),units="in", width=5, height=5, res=300,type="cairo")
 vsdata <- vst(dds, blind=FALSE)
-pca<-plotPCA(vsdata, intgroup=colnames(design)[i])
-pca<-pca+geom_text(label=rownames(design),color="black",nudge_x=1,nudge_y=0.7,size=2)
+pca<-plotPCA(vsdata, intgroup=colnames(design)[i])+theme(aspect.ratio = 1)
+pca<-pca+geom_text(label=rownames(design),color="black",nudge_x=0.5,nudge_y=0.3,size=2)
 print(pca)
 dev.off()
   
