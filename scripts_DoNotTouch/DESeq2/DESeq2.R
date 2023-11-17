@@ -84,7 +84,8 @@ res <- results(dds,name=paste(pheno_col,compared,"vs",refcond,sep="_"))
 resLFC <- lfcShrink(dds, coef=paste(pheno_col,compared,"vs",refcond,sep="_"), type="apeglm")
 
 ### Volcano Plot (enhanced) ###
-##png(paste(outpath,'/volcano_',compared,"_vs_",refcond,'(ref).png',sep=""),units="in", width=7, height=5, res=300)
+png(paste(outpath,'/volcano_',compared,"_vs_",refcond,'(ref).png',sep=""),units="in", width=7, height=5, res=300, ,type="cairo")
+
 ##EnhancedVolcano(resLFC,
 ##                lab = rownames(resLFC),
 ##                x = 'log2FoldChange',
@@ -93,7 +94,22 @@ resLFC <- lfcShrink(dds, coef=paste(pheno_col,compared,"vs",refcond,sep="_"), ty
 ##                FCcutoff = 1,
 ##                pointSize = 2.0,
 ##                labSize = 3.0)
-##dev.off()
+
+resLFC_data<-data.frame(resLFC)
+resLFC_data$diffexpressed <- "NO"
+resLFC_data$diffexpressed[resLFC_data$log2FoldChange > 1 & resLFC_data$pvalue < 0.000001] <- "UP"
+resLFC_data$diffexpressed[resLFC_data$log2FoldChange < -1 & resLFC_data$pvalue < 0.000001] <- "DOWN"
+resLFC_data$delabel <- NA
+resLFC_data <- resLFC_data[order(resLFC_data$padj),]
+resLFC_data$delabel[1:50]<-rownames(resLFC_data)[1:50]
+
+ggplot(data = resLFC_data, aes(x = log2FoldChange, y = -log10(pvalue),col = diffexpressed,label=delabel))+geom_vline(xintercept = c(-1, 1), col = "red", linetype = 'dashed') +
+  geom_hline(yintercept = -log10(0.0001), col = "red", linetype = 'dashed') + geom_point(size=0.5)+
+  scale_color_manual(values = c("darkblue", "grey", "darkred"),
+                     labels = c("Downregulated", "Not significant", "Upregulated"))+
+  geom_text_repel(max.overlaps = Inf,color="black",size=1)
+
+dev.off()
 ###########
 
 ######## MA Plot ###########
