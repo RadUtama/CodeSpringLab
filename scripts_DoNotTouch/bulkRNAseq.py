@@ -650,7 +650,7 @@ def visualization_heatmap(inpath_design,outpath,refcond,compared):
     
     design = pd.read_table(inpath_design+"/design_matrix.txt",index_col=0)
     design = design.iloc[:,:len(design.columns)-1]
-    count_norm = pd.read_table(outpath+'/normalized_counts_'+compared+'_vs_'+refcond+"(ref).txt',index_col=0)
+    count_norm = pd.read_table(outpath+'/normalized_counts_'+compared+'_vs_'+refcond+'(ref).txt',index_col=0)
     count_norm = count_norm.drop(['DESCRIPTION'],axis=1)
     count_norm_sig = count_norm[count_norm.index.isin(genes)]
     plt.rcParams['figure.dpi'] = 300
