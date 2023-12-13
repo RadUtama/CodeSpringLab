@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from pandas import DataFrame
 
 project_name=config.project_name
+param=config.parameters_exist
 
 def Tree():
     
@@ -101,6 +102,7 @@ def ListDir(directory):
 def filetransfer_Prep():
         
     global project_name
+    global param
     os.makedirs("../../csl_results/"+project_name+"/data/",exist_ok=True)
     #os.makedirs("../../csl_results/"+project_name+"/data/manifest/",exist_ok=True)
     os.makedirs("../../csl_results/"+project_name+"/log/",exist_ok=True)
@@ -108,44 +110,66 @@ def filetransfer_Prep():
     if os.path.exists("../../csl_results/"+project_name+"/log/output_listFastq.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_listFastq.txt"):
         os.remove("../../csl_results/"+project_name+"/log/output_listFastq.txt")
         os.remove("../../csl_results/"+project_name+"/log/error_listFastq.txt")
-   
-    read_path_destination = "../../csl_results/"+project_name+"/data/fastq/"
-    print("Read files will be copied to ../../csl_results/"+project_name+"/data/fastq/")
-    print("==================================")
-    print("Here's the list of available genomes:")
-    genome_list = pd.Series(['human','mouse'])
-    print("Index")
-    print(genome_list)
-    print("==================================")
-    print("Specify the index to the genome:(e.g 0)")
-    print("\033[91m"+"If you want to use our example dataset, type the number"+"\033[94m"+" 1"+"\x1b[0m")
-    genome_index = int(input())
-    genome = genome_list[genome_index]
-    print("==================================")
-    print("Copy the path to your original read files folder:")
-    print("\033[91m"+"If you want to use our example dataset, copy and paste this path below,"+"\x1b[0m")
-    print("../scripts_DoNotTouch/test/fastq/")
-    read_path_original = input()
-    print("==================================")
-    print("Copy the path to design matrix folder (If it's in your home folder, type tilde sign ~):")
-    print("\033[91m"+"If you want to use our example dataset, copy and paste this path below,"+"\x1b[0m")
-    print("../scripts_DoNotTouch/test/manifest/")
-    inpath_design = input()
-    print("==================================")
-    print("You'll be working with "+"\033[91m"+project_name+"\x1b[0m"+" folder")
-    print("Re-running any cell will overwrite exisiting outputs in folder "+"\033[91m"+project_name+"\x1b[0m")
-    print("If you don't want to overwrite, please re-run this cell and specify different unique"+"\033[91m project_name")
+    if param == "n":
+        read_path_destination = "../../csl_results/"+project_name+"/data/fastq/"
+        print("Read files will be copied to ../../csl_results/"+project_name+"/data/fastq/")
+        print("==================================")
+        print("Here's the list of available genomes:")
+        genome_list = pd.Series(['human','mouse'])
+        print("Index")
+        print(genome_list)
+        print("==================================")
+        print("Specify the index to the genome:(e.g 0)")
+        print("\033[91m"+"If you want to use our example dataset, type the number"+"\033[94m"+" 1"+"\x1b[0m")
+        genome_index = int(input())
+        genome = genome_list[genome_index]
+        print("==================================")
+        print("Copy the path to your original read files folder:")
+        print("\033[91m"+"If you want to use our example dataset, copy and paste this path below,"+"\x1b[0m")
+        print("../scripts_DoNotTouch/test/fastq/")
+        read_path_original = input()
+        print("==================================")
+        print("Copy the path to design matrix folder (If it's in your home folder, type tilde sign ~):")
+        print("\033[91m"+"If you want to use our example dataset, copy and paste this path below,"+"\x1b[0m")
+        print("../scripts_DoNotTouch/test/manifest/")
+        inpath_design = input()
+        print("==================================")
+        print("You'll be working with "+"\033[91m"+project_name+"\x1b[0m"+" folder")
+        print("Re-running any cell will overwrite exisiting outputs in folder "+"\033[91m"+project_name+"\x1b[0m")
+        print("If you don't want to overwrite, please re-run this cell and specify different unique"+"\033[91m project_name")
     
-    scriptpath_listdir = "../scripts_DoNotTouch/fastq/qsub_listdir.sh"
-    scriptpath_copy = "../scripts_DoNotTouch/fastq/qsub_copy.sh"
+        scriptpath_listdir = "../scripts_DoNotTouch/fastq/qsub_listdir.sh"
+        scriptpath_copy = "../scripts_DoNotTouch/fastq/qsub_copy.sh"
     
-    des=pd.read_table(inpath_design+"/design_matrix.txt")
-    filename=des.iloc[:,len(des.columns)-1]
-    if filename.str.contains('_R2_').any() ==True:
-        pairing = 'y'
-    else:
-        pairing = 'n'
+        des=pd.read_table(inpath_design+"/design_matrix.txt")
+        filename=des.iloc[:,len(des.columns)-1]
+        if filename.str.contains('_R2_').any() ==True:
+            pairing = 'y'
+        else:
+            pairing = 'n'
 
+        conf = open("../scripts_DoNotTouch/config.py", "w")
+        conf.write("project_name="+"'"+project_name+"'"+"\n")
+        conf.write("parameters_exist="+"'"+param+"'"+"\n")
+        conf.write("read_path_original="+"'"+read_path_original+"'"+"\n")
+        conf.write("read_path_destination="+"'"+read_path_destination+"'"+"\n")
+        conf.write("genome="+"'"+genome+"'"+"\n")
+        conf.write("pairing="+"'"+pairing+"'"+"\n")
+        conf.write("inpath_design="+"'"+inpath_design+"'"+"\n")
+        conf.write("scriptpath_listdir="+"'"+scriptpath_listdir+"'"+"\n")
+        conf.write("scriptpath_copy="+"'"+scriptpath_copy+"'")
+        conf.close()
+
+    else:
+    
+        read_path_original=config.read_path_original
+        read_path_destination=config.read_path_destination
+        genome=config.genome
+        pairing=config.pairing
+        inpath_design=config.inpath_design
+        scriptpath_listdir=config.scriptpath_listdir
+        scriptpath_copy=config.scriptpath_copy
+    
     #command = "source "+scriptpath_listdir+" "+read_path_original+" "+project_name
     #joblist=os.popen(command).read().splitlines()
     #print(joblist)
