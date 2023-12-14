@@ -10,6 +10,7 @@ args = commandArgs(trailingOnly=TRUE)
 outpath <- args[3]
 refcond <- args[4]
 compared <- args[5]
+redundant <- args[6]
 
 #count <- read.delim(args[1],sep="",row.names = 1,check.names=FALSE)
 count <- read.delim(args[1],sep="",row.names = NULL,check.names=FALSE)
@@ -19,6 +20,7 @@ row.names(count) <- count[,1]
 count[,1] <- NULL
 
 design <- read.delim(args[2],header=T,sep="\t",row.names = 1,check.names=FALSE)
+design <- design[,-match(redundant, colnames(design))]
 design <- design %>% filter_all(any_vars(. %in% c(refcond,compared)))
 design <- design[1:(ncol(design)-1)]
 
