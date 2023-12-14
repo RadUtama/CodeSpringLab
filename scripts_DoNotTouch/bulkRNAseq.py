@@ -600,6 +600,12 @@ def deseq2_Prep(inpath_design):
 
     design = pd.read_table(inpath_design+'/design_matrix.txt',index_col=0)
     design = design.iloc[:,:len(design.columns)-1]
+
+    print("========================================")
+    print("If you have a redundant variable/column in your design matrix,")
+    print("please type the name of that variable/column(e.g age)")
+    print("Otherwise, leave it blank and press enter/return")
+    redundant=input()
     
     print("========================================")
     print("Here's the list of phenotypes/conditions/experiments")
@@ -620,7 +626,7 @@ def deseq2_Prep(inpath_design):
     scriptpath_deseq2 = '../scripts_DoNotTouch/DESeq2/qsub_deseq2.sh'
     Rpath_deseq2 = '../scripts_DoNotTouch/DESeq2/DESeq2.R'
     
-    return scriptpath_deseq2,Rpath_deseq2,outpath,refcond,compared,design_var
+    return scriptpath_deseq2,Rpath_deseq2,outpath,refcond,compared,design_var,redundant
 
 def deseq2_PrepDirect():
     
@@ -634,12 +640,12 @@ def deseq2_PrepDirect():
     
     return outpath_counts+"/",inpath_design+"/"
 
-def deseq2_RunDE(scriptpath_deseq2,Rpath_deseq2,inpath_counts,inpath_design,outpath,refcond,compared):
+def deseq2_RunDE(scriptpath_deseq2,Rpath_deseq2,inpath_counts,inpath_design,outpath,refcond,compared,redundant):
     
     global project_name
     
     jobid = []
-    command = "source "+scriptpath_deseq2+" "+Rpath_deseq2+" "+inpath_counts+"/count_matrix.txt"+" "+inpath_design+"/design_matrix.txt"+" "+outpath+" "+refcond+" "+compared+" "+project_name
+    command = "source "+scriptpath_deseq2+" "+Rpath_deseq2+" "+inpath_counts+"/count_matrix.txt"+" "+inpath_design+"/design_matrix.txt"+" "+outpath+" "+refcond+" "+compared+" "+redundant+" "+project_name
     job = os.popen(command).read().splitlines()
     print(job)
     jobid.append(job[0].split(' ')[2])
