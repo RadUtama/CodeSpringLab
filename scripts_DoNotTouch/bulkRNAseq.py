@@ -74,6 +74,8 @@ def Qstat(jobid):
             status_stat = id_stat.value_counts().rename(index={'r':'Number of jobs still running = ',
                                                     'qw':'Number of jobs waiting in line = ',
                                                     't':'Number of jobs about to run = ',
+                                                    'Rt':'Number of jobs about to run = ',
+                                                    'Rr':'Number of jobs about to run = ',
                                                     'Eqw':'Number of jobs cannot run (server error) = ',
                                                    })
             print(status_stat)
