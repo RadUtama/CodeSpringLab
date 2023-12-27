@@ -20,7 +20,9 @@ row.names(count) <- count[,1]
 count[,1] <- NULL
 
 design <- read.delim(args[2],header=T,sep="\t",row.names = 1,check.names=FALSE)
-design <- design[,-match(redundant, colnames(design))]
+if (redundant %in% colnames(design)){
+    design <- design[,-match(redundant, colnames(design))]
+}
 design <- design %>% filter_all(any_vars(. %in% c(refcond,compared)))
 design <- design[1:(ncol(design)-1)]
 
