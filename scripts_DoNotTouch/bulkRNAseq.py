@@ -606,6 +606,8 @@ def deseq2_Prep(inpath_design):
     print("please type the name of that variable/column(e.g age)")
     print("Otherwise, leave it blank and press enter/return")
     redundant=input()
+    if len(redundant) == 0:
+        redundant = "NoRedundant"
     
     print("========================================")
     print("Here's the list of phenotypes/conditions/experiments")
