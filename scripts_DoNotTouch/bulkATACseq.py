@@ -750,7 +750,7 @@ def visualization_Prep(genome,out_peak):
         os.remove("../../csl_results/"+project_name+"/log/error_genomeTracks.txt")
     
     print("========================================")
-    print("Specify which genome region to plot tracks:(e.g chr1:2700000-2800000")
+    print("Specify which genome region to plot tracks:(e.g chr1:2700000-2800000)")
     region = input()
     print("========================================")
     
