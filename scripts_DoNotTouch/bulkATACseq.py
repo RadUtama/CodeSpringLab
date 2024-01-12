@@ -793,3 +793,20 @@ def visualization_PlotTracks(tracks_dir):
     trackplot = IFrame(tracks_dir+"/"+"genomeTracks.png", width=800, height=800)
     
     return trackplot
+
+def visualization_PlotHeatmap(out_peak):
+
+    dirlist = DataFrame(pd.Series(os.listdir(out_peak)))
+    dirlist.index = range(len(dirlist))
+    print(dirlist)
+    
+    print("========================================")
+    print("Specify index to visualize peak heatmap:(e.g 0)")
+    index_files = int(input())    
+    
+    file = dirlist.loc[index_files,0]
+    
+    heatplot = IFrame(out_peak+"/"+file+"/"+file+"_heatmap_TSS.png", width=800, height=800)
+    
+    return heatplot
+    
