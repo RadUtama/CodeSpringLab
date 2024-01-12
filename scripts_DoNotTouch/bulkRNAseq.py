@@ -360,35 +360,44 @@ def cutadapt_Prep(directory,pairing):
     else:
         scriptpath_cutadapt = '../scripts_DoNotTouch/cutadapt_SE/qsub_cutadapt_SE.sh'
         read1_list = directory+'/'+prefix+'_R1_001.fastq.gz'
-        read2_list = directory +'/'+prefix+'_R2_001.fastq.gz'
         trimmed1_list = outdir_cutadapt+'/'+prefix+'_R1_001.fastq.gz'
-        trimmed2_list = outdir_cutadapt+'/'+prefix+'_R2_001.fastq.gz'
         
     print("========================================")
-    print("Specify the adapter sequence (e.g AGATCGGAAGAGC, illumina universal, etc):")
+    print("Specify the adapter for R1/read1:")
+    print("AGATCGGAAGAGCACACGTCTGAACTCCAGTCA for Illumina Universal TruSeq RNA")
+    print("CTGTCTCTTATACACATCTCCGAGCCCACGAGAC for Nextera Transposase ATAC")
+    print("TGGAATTCTCGG for Illumina Small RNA 3' ")
+    print("GATCGTCGGACT for Illumina Small RNA 5' ")
     adapter = input()
     print("========================================")
-    print("Specify minimum length after trimming (default 15):")
+    print("Specify the adapter for R2/read2:")
+    print("AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT for Illumina Universal TruSeq RNA")
+    print("CTGTCTCTTATACACATCTGACGCTGCCGACGA for Nextera Transposase ATAC")
+    print("TGGAATTCTCGG for Illumina Small RNA 3' ")
+    print("GATCGTCGGACT for Illumina Small RNA 5' ")
+    adapter2 = input()
+    print("========================================")
+    print("Specify minimum length after trimming (default 20):")
     minlen = input()
 
-    return adapter,minlen,read1_list,read2_list,trimmed1_list,trimmed2_list,outdir_cutadapt,scriptpath_cutadapt
+    return adapter,adapter2,minlen,read1_list,read2_list,trimmed1_list,trimmed2_list,outdir_cutadapt,scriptpath_cutadapt
 
 def cutadapt_PrepDirect():
     
     print("========================================")
-    print("Specify the path to fastq folder used for QC:")
+    print("Specify the path to fastq folder used for adapter trimming:")
     read_path_destination = input()
     print("========================================")
     
     return read_path_destination+"/"
 
-def cutadapt_RunTrimming(adapter,minlen,read1_list,read2_list,trimmed1_list,trimmed2_list,scriptpath_cutadapt):
+def cutadapt_RunTrimming(adapter,adapter2,minlen,read1_list,read2_list,trimmed1_list,trimmed2_list,scriptpath_cutadapt):
             
     global project_name
     
     jobid = []
     for i in range(len(read1_list)):
-        command = "source "+scriptpath_cutadapt+" "+minlen+" "+adapter+" "+trimmed1_list[i]+" "+trimmed2_list[i]+" "+read1_list[i]+" "+read2_list[i]+" "+project_name 
+        command = "source "+scriptpath_cutadapt+" "+minlen+" "+adapter+" "+adapter2+" "+trimmed1_list[i]+" "+trimmed2_list[i]+" "+read1_list[i]+" "+read2_list[i]+" "+project_name 
         job = os.popen(command).read().splitlines()
         print(job)
         
