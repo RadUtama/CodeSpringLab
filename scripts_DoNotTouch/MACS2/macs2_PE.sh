@@ -17,30 +17,19 @@ macs2 callpeak --nomodel \
 	${4} \
 	${5}/${1}_treat_pileup.bw
 
-#module load EBModules
-#module load Anaconda3/2023.03-1
 
-#echo 'modules'
+module load Anaconda3/2023.03-1
 
-#conda init bash
-##exec $SHELL
-
-#echo 'shell'
-
-#conda activate deeptools
+conda activate deeptools
     
-#echo 'conda'
-
-#computeMatrix reference-point -p 4 \
-#    --referencePoint TSS \
-#    -b 1000 -a 1000 \
-#    -R ${6} \
-#    -S ${5}/${1}_treat_pileup.bw \
-#    --skipZeros \
-#    -o ${5}/${1}_TSS.gz \
-#    --outFileSortedRegions ${5}/${1}_genes_TSS.bed
-
-#echo 'TSS'
+computeMatrix reference-point -p 4 \
+    --referencePoint TSS \
+    -b 1000 -a 1000 \
+    -R ${6} \
+    -S ${5}/${1}_treat_pileup.bw \
+    --skipZeros \
+    -o ${5}/${1}_TSS.gz \
+    --outFileSortedRegions ${5}/${1}_genes_TSS.bed
 
 #computeMatrix reference-point -p 4 \
 #    --referencePoint center \
@@ -51,16 +40,11 @@ macs2 callpeak --nomodel \
 #    -o ${5}/${1}_peakCenter.gz \
 #    --outFileSortedRegions ${5}/${1}_genes_peakCenter.bed
      
-#echo 'center'     
      
-#plotHeatmap -m ${5}/${1}_TSS.gz \
-#    -out ${5}/${1}_heatmap_TSS.png \
-
-#echo 'heatmap tss'
+plotHeatmap -m ${5}/${1}_TSS.gz \
+    -out ${5}/${1}_heatmap_TSS.png \
 
 #plotHeatmap -m ${5}/${1}_peakCenter.gz \
 #    -out ${5}/${1}_heatmap_peakCenter.png \
 
-#echo 'heatmap center'
-
-#conda deactivate
+conda deactivate
