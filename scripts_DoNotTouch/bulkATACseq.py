@@ -569,7 +569,7 @@ def macs2_Prep(genome,out_dir,pairing):
     
     macs2_prefix_list = macs2_dir+prefix+'/'
 
-    return scriptpath_macs2,genomesize,chromsize,bed_list,macs2_prefix_list,prefix,anno_onlyChrNoMito
+    return scriptpath_macs2,genomesize,chromsize,bed_list,macs2_prefix_list,prefix,anno_onlyChrNoMito,macs2_dir
 
 def macs2_PrepDirect():
     
