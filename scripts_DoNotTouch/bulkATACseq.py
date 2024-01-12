@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from pandas import DataFrame
 
 project_name=config.project_name
+param=config.parameters_exist
 
 def Tree():
     
@@ -103,6 +104,7 @@ def ListDir(directory):
 def filetransfer_Prep():
         
     global project_name
+    global param
     os.makedirs("../../csl_results/"+project_name+"/data/",exist_ok=True)
     #os.makedirs("../../csl_results/"+project_name+"/data/manifest/",exist_ok=True)
     os.makedirs("../../csl_results/"+project_name+"/log/",exist_ok=True)
@@ -110,44 +112,66 @@ def filetransfer_Prep():
     if os.path.exists("../../csl_results/"+project_name+"/log/output_listFastq.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_listFastq.txt"):
         os.remove("../../csl_results/"+project_name+"/log/output_listFastq.txt")
         os.remove("../../csl_results/"+project_name+"/log/error_listFastq.txt")
-   
-    read_path_destination = "../../csl_results/"+project_name+"/data/fastq/"
-    print("Read files will be copied to ../../csl_results/"+project_name+"/data/fastq/")
-    print("==================================")
-    print("Here's the list of available genomes:")
-    genome_list = pd.Series(['human','mouse'])
-    print("Index")
-    print(genome_list)
-    print("==================================")
-    print("Specify the index to the genome:(e.g 0)")
-    print("\033[91m"+"If you want to use our example dataset, type the number"+"\033[94m"+" 0"+"\x1b[0m")
-    genome_index = int(input())
-    genome = genome_list[genome_index]
-    print("==================================")
-    print("Copy the path to your original read files folder:")
-    print("\033[91m"+"If you want to use our example dataset, copy and paste this path below,"+"\x1b[0m")
-    print("../scripts_DoNotTouch/test/fastq_atac/")
-    read_path_original = input()
-    print("==================================")
-    print("Copy the path to design matrix folder (If it's in your home folder, type tilde sign ~):")
-    print("\033[91m"+"If you want to use our example dataset, copy and paste this path below,"+"\x1b[0m")
-    print("../scripts_DoNotTouch/test/manifest_atac/")
-    inpath_design = input()
-    print("==================================")
-    print("You'll be working with "+"\033[91m"+project_name+"\x1b[0m"+" folder")
-    print("Re-running any cell will overwrite exisiting outputs in folder "+"\033[91m"+project_name+"\x1b[0m")
-    print("If you don't want to overwrite, please re-run this cell and specify different unique"+"\033[91m project_name")
+    if param == "n":
+        read_path_destination = "../../csl_results/"+project_name+"/data/fastq/"
+        print("Read files will be copied to ../../csl_results/"+project_name+"/data/fastq/")
+        print("==================================")
+        print("Here's the list of available genomes:")
+        genome_list = pd.Series(['human','mouse'])
+        print("Index")
+        print(genome_list)
+        print("==================================")
+        print("Specify the index to the genome:(e.g 0)")
+        print("\033[91m"+"If you want to use our example dataset, type the number"+"\033[94m"+" 0"+"\x1b[0m")
+        genome_index = int(input())
+        genome = genome_list[genome_index]
+        print("==================================")
+        print("Copy the path to your original read files folder:")
+        print("\033[91m"+"If you want to use our example dataset, copy and paste this path below,"+"\x1b[0m")
+        print("../scripts_DoNotTouch/test/fastq_atac/")
+        read_path_original = input()
+        print("==================================")
+        print("Copy the path to design matrix folder (If it's in your home folder, type tilde sign ~):")
+        print("\033[91m"+"If you want to use our example dataset, copy and paste this path below,"+"\x1b[0m")
+        print("../scripts_DoNotTouch/test/manifest_atac/")
+        inpath_design = input()
+        print("==================================")
+        print("You'll be working with "+"\033[91m"+project_name+"\x1b[0m"+" folder")
+        print("Re-running any cell will overwrite exisiting outputs in folder "+"\033[91m"+project_name+"\x1b[0m")
+        print("If you don't want to overwrite, please re-run this cell and specify different unique"+"\033[91m project_name")
     
-    scriptpath_listdir = "../scripts_DoNotTouch/fastq/qsub_listdir.sh"
-    scriptpath_copy = "../scripts_DoNotTouch/fastq/qsub_copy.sh"
+        scriptpath_listdir = "../scripts_DoNotTouch/fastq/qsub_listdir.sh"
+        scriptpath_copy = "../scripts_DoNotTouch/fastq/qsub_copy.sh"
     
-    des=pd.read_table(inpath_design+"/design_matrix.txt")
-    filename=des.iloc[:,len(des.columns)-1]
-    if filename.str.contains('_R2_').any() ==True:
-        pairing = 'y'
-    else:
-        pairing = 'n'
+        des=pd.read_table(inpath_design+"/design_matrix.txt")
+        filename=des.iloc[:,len(des.columns)-1]
+        if filename.str.contains('_R2_').any() ==True:
+            pairing = 'y'
+        else:
+            pairing = 'n'
 
+        conf = open("../scripts_DoNotTouch/config.py", "w")
+        conf.write("project_name="+"'"+project_name+"'"+"\n")
+        conf.write("parameters_exist="+"'"+param+"'"+"\n")
+        conf.write("read_path_original="+"'"+read_path_original+"'"+"\n")
+        conf.write("read_path_destination="+"'"+read_path_destination+"'"+"\n")
+        conf.write("genome="+"'"+genome+"'"+"\n")
+        conf.write("pairing="+"'"+pairing+"'"+"\n")
+        conf.write("inpath_design="+"'"+inpath_design+"'"+"\n")
+        conf.write("scriptpath_listdir="+"'"+scriptpath_listdir+"'"+"\n")
+        conf.write("scriptpath_copy="+"'"+scriptpath_copy+"'")
+        conf.close()
+
+    else:
+    
+        read_path_original=config.read_path_original
+        read_path_destination=config.read_path_destination
+        genome=config.genome
+        pairing=config.pairing
+        inpath_design=config.inpath_design
+        scriptpath_listdir=config.scriptpath_listdir
+        scriptpath_copy=config.scriptpath_copy
+    
     #command = "source "+scriptpath_listdir+" "+read_path_original+" "+project_name
     #joblist=os.popen(command).read().splitlines()
     #print(joblist)
@@ -322,9 +346,9 @@ def fastqc_Visualization(outdir_fastqc):
 def cutadapt_Prep(directory,pairing):
     
     global project_name
-    if os.path.exists("../../csl_results/"+project_name+"/log/output_Cutadapt.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_Cutadapt.txt"):
-        os.remove("../../csl_results/"+project_name+"/log/output_Cutadapt.txt")
-        os.remove("../../csl_results/"+project_name+"/log/error_Cutadapt.txt")
+    if os.path.exists("../../csl_results/"+project_name+"/log/output_cutadapt.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_cutadapt.txt"):
+        os.remove("../../csl_results/"+project_name+"/log/output_cutadapt.txt")
+        os.remove("../../csl_results/"+project_name+"/log/error_cutadapt.txt")
     
     readlist = pd.Series(os.listdir(directory))
     readlist = readlist[readlist.str.endswith('fastq.gz')]
@@ -395,6 +419,9 @@ def cutadapt_RunTrimming(adapter,adapter2,minlen,read1_list,read2_list,trimmed1_
 def bowtie2_Prep(genome,pairing,read_dir):
         
     global project_name
+    if os.path.exists("../../csl_results/"+project_name+"/log/output_bowtie2.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_bowtie2.txt"):
+        os.remove("../../csl_results/"+project_name+"/log/output_bowtie2.txt")
+        os.remove("../../csl_results/"+project_name+"/log/error_bowtie2.txt")
     
     print("========================================")
     print("If you have trimmed the adapters with cutadapt prior, do you want to use these trimmed reads instead?:(y/n)")
@@ -501,35 +528,9 @@ def bowtie2_Visualization(out_dir):
     index_files = int(input())    
     
     file = dirlist.loc[index_files,0]
-    qc = IFrame(out_dir+"/"+file+"/"+file+"_insert_size_histogram-1.jpg", width=1000, height=800)
+    qc = IFrame(out_dir+"/"+file+"/"+file+"_insert_size_histogram.jpg", width=1000, height=800)
     
     return qc
-    
-
-def macs2_ListDir(prefix,count_prefix_list):
-    
-    global project_name
-    outpath_macs2 = "../../csl_results/"+project_name+"/data/macs2/"
-    os.makedirs(outpath_macs2,exist_ok=True)
-    print("MACS2 summary matrix is stored in ../../csl_results/"+project_name+"/data/macs2/")
-    
-    i = 0
-
-    for file in count_prefix_list:
-        i += 1
-        
-        logfile = file+"_counts.txt.summary"
-
-        log_df = pd.read_table(logfile,comment='#',header=None,sep="\t",index_col=[0])
-        log_raw = log_df.rename({log_df.columns[0]:prefix[i-1]},axis='columns')
-        if i == 1 :
-            log_matrix = log_raw
-        else :
-            log_matrix = pd.concat([log_matrix,log_raw],axis=1)
-
-    log_matrix.to_csv(outpath_counts+'featurecounts_summary.txt',sep='\t')        
-    
-    return log_matrix
 
 def macs2_Prep(genome,out_dir,pairing):
     
@@ -548,7 +549,7 @@ def macs2_Prep(genome,out_dir,pairing):
     if genome == 'mouse':
         genomesize = "1.87e+9"
         chromsize = "/grid/bsr/data/data/utama/genome/GRCm39_M29_gencode/chrom.sizes"
-        anno_onlyChrNoMito = "/grid/bsr/data/data/utama/genome/hg38_p13_gencode/gencode.v42.chr_patch_hapl_scaff.annotation_onlyChrNoMito.bed"
+        anno_onlyChrNoMito = "/grid/bsr/data/data/utama/genome/GRCm39_M29_gencode/gencode.vM29.annotation_onlyChrNoMito.bed"
     elif genome == 'human':
         genomesize = "2.7e+9"
         chromsize = "/grid/bsr/data/data/utama/genome/hg38_p13_gencode/chrom.sizes"
@@ -559,11 +560,11 @@ def macs2_Prep(genome,out_dir,pairing):
     else:
         scriptpath_macs2 = '../scripts_DoNotTouch/MACS2/qsub_macs2_SE.sh'
 
-    print("Remove all kinds of read duplicates:(e.g y/n)")
-    removeDup = input()
-    if removeDup == "y":
-        bed_list = out_dir+prefix+'/'+prefix+'Aligned.sortedByName_removeDup.out.bed'
-    else:
+    #print("Remove all kinds of read duplicates:(e.g y/n)")
+    #removeDup = input()
+    #if removeDup == "y":
+    #    bed_list = out_dir+prefix+'/'+prefix+'Aligned.sortedByName_removeDup.out.bed'
+    #else:
         bed_list = out_dir+prefix+'/'+prefix+'Aligned.sortedByName.out.bed'
     
     macs2_prefix_list = macs2_dir+prefix+'/'
@@ -599,70 +600,55 @@ def macs2_RunPeakCalling(scriptpath_macs2,genomesize,chromsize,bed_list,macs2_pr
     
     return jobid
 
-def bowtie2_Prep(inpath_design):
+def macs2_PeakList():
+    
+    global project_name
+    
+    outpath = "../../csl_results/cd4/data/macs2/"
+    dirlist = DataFrame(pd.Series(os.listdir(outpath)))
+    dirlist.index = range(len(dirlist))
+    print(dirlist)
+    
+    print("========================================")
+    print("Specify index to visualize insert size frequency:(e.g 0)")
+    index_files = int(input())    
+    
+    file = dirlist.loc[index_files,0]
+    
+    peaklist = pd.read_table(outpath+"/"+file+"/"+file+"_peaks.xls",header=0,index_col=0,comment='#',engine='python')
+    
+    return peaklist
+
+def homer_PrepDirect():
+    
+    print("========================================")
+    print("Specify genome:(e.g human, mouse, etc)")
+    genome = input()
+    print("========================================")
+    print("Specify the path to alignment folder used for peak calling:")
+    out_dir = input()
+    print("========================================")
+    print("Specify the path to folder containing design_matrix.txt used for DE:")
+    inpath_design = input()
+    print("========================================")
+    
+    return genome,out_dir+"/",inpath_design
+
+def homer_Prep(genome,out_dir,inpath_design):
         
     global project_name
+    if os.path.exists("../../csl_results/"+project_name+"/log/output_homer_annotag.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_homer_annotag.txt"):
+        os.remove("../../csl_results/"+project_name+"/log/output_homer_annotag.txt")
+        os.remove("../../csl_results/"+project_name+"/log/error_homer_annotag.txt")
+    if os.path.exists("../../csl_results/"+project_name+"/log/output_homer_diffpeak.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_homer_diffpeak.txt"):
+        os.remove("../../csl_results/"+project_name+"/log/output_homer_diffpeak.txt")
+        os.remove("../../csl_results/"+project_name+"/log/error_homer_diffpeak.txt")
     
-    print("========================================")
-    print("If you have trimmed the adapters with cutadapt prior, do you want to use these trimmed reads instead?:(y/n)")
-    usetrim = input()
-    if usetrim == 'y':
-        read_dir = "../../csl_results/"+project_name+"/data/cutadapt/"
-    print("========================================")
+    if genome == 'mouse':
+        genome_homer = "mm10"
+    elif genome == 'human':
+        genome_homer = "hg38"
     
-    prefix = pd.Series(os.listdir(read_dir))
-    prefix = prefix[prefix.str.endswith('fastq.gz')]
-    prefix = prefix.str.replace('_R1_001.fastq.gz','',regex=False).str.replace('_R2_001.fastq.gz','',regex=False).unique()
-    
-    out_dir = "../../csl_results/"+project_name+"/data/bowtie2/"
-   
-    for i in range(len(prefix)):
-        os.makedirs(out_dir+prefix[i],exist_ok=True)
-
-    print("Bowtie2 alignment results will be stored in ../../csl_results/"+project_name+"/data/bowtie2/")
-    
-    read1_list = read_dir+'/'+prefix+'_R1_001.fastq.gz'
-    read2_list = read_dir+'/'+prefix+'_R2_001.fastq.gz'
-    out_prefix_list = out_dir+prefix+'/'+prefix
-    
-    scriptpath_homer_tag = '../scripts_DoNotTouch/Homer/qsub_homer_tag.sh'
-
-    return genome_index_path,read1_list,read2_list,out_prefix_list,out_dir,scriptpath_bowtie2
-
-
-def featurecounts_CreateCountMatrix():
-
-    global project_name
-    inpath_counts = "../../csl_results/"+project_name+"/data/featurecounts/"
-    outpath_counts = "../../csl_results/"+project_name+"/data/counts/"
-    print("Count matrix is stored in ../../csl_results/"+project_name+"/data/counts/")
-
-    filelist=sorted([f for f in os.listdir(inpath_counts) if not f.startswith('.')])
-
-    i = 0
-
-    for file in filelist:
-        i += 1
-        count_df = pd.read_table(os.path.join(inpath_counts,file,file+'_counts.txt'),comment='#',header=[0],index_col=[0])
-        count_raw = count_df.drop(['Chr','Start','End','Strand','Length'],axis=1)
-        count_raw = count_raw.rename({count_raw.columns[0]:file},axis='columns')
-        if i == 1 :
-            count_matrix = count_raw
-        else :
-            count_matrix = pd.concat([count_matrix,count_raw],axis=1)
-
-    count_matrix.columns=count_matrix.columns.str.rstrip('_counts.txt')
-    count_matrix.to_csv(outpath_counts+'count_matrix.txt',sep='\t')
-
-    return outpath_counts,count_matrix
-    
-def deseq2_Prep(inpath_design):
-    
-    global project_name
-    outpath = "../../csl_results/"+project_name+"/data/deseq2/"
-    os.makedirs(outpath,exist_ok=True)
-    print("DESeq2 results are stored in ../../csl_results/"+project_name+"/data/deseq2/")
-
     design = pd.read_table(inpath_design+'/design_matrix.txt',index_col=0)
     design = design.iloc[:,:len(design.columns)-1]
     
@@ -682,89 +668,128 @@ def deseq2_Prep(inpath_design):
     print("Which phenotype/condition/replicate/batch to compare?(e.g treated)")
     compared = input()
     
-    scriptpath_deseq2 = '../scripts_DoNotTouch/DESeq2/qsub_deseq2.sh'
-    Rpath_deseq2 = '../scripts_DoNotTouch/DESeq2/DESeq2.R'
+    refcond_full = design[design.isin(['refcond']).any(axis=1)].index
+    refcond_list = ""
+    for i in range(len(refcond_full)):
+        if i == 0:
+            refcond_list += refcond_full[i]
+        else:
+            refcond_list += " "+refcond_full[i]
+        
+    compared_full = design[design.isin(['compared']).any(axis=1)].index
+    compared_list = ""
+    for i in range(len(compared_full)):
+        if i == 0:
+            compared_list += compared_full[i]
+        else:
+            compared_list += " "+compared_full[i]
     
-    return scriptpath_deseq2,Rpath_deseq2,outpath,refcond,compared,design_var
+    prefix = pd.Series(os.listdir(out_dir))
+    
+    out_dir_anno = "../../csl_results/"+project_name+"/data/MACS2/"
+    out_dir_tag = "../../csl_results/"+project_name+"/data/homer/"
+   
+    for i in range(len(prefix)):
+        os.makedirs(out_dir_tag+'/'+prefix[i],exist_ok=True)
 
-def deseq2_PrepDirect():
+    print("========================================")
+    print("Homer tag results will be stored in ../../csl_results/"+project_name+"/data/homer/")
     
-    print("========================================")
-    print("Specify the path to folder containing count_matrix.txt used for DE:")
-    outpath_counts = input()
-    print("========================================")
-    print("Specify the path to folder containing design_matrix.txt used for DE:")
-    inpath_design = input()
-    print("========================================")
+    out_prefix_bowtie2_list = out_dir+'/'+prefix+'/'+prefix
+    out_prefix_anno_list = out_dir_anno+'/'+prefix+'/'+prefix
+    out_prefix_tag_list = out_dir_tag+'/'+prefix+'/'
     
-    return outpath_counts+"/",inpath_design+"/"
+    scriptpath_homer_annotag = '../scripts_DoNotTouch/Homer/qsub_homer_annotag.sh'
+    scriptpath_homer_diffpeak = '../scripts_DoNotTouch/Homer/qsub_homer_diffpeak.sh'
 
-def deseq2_RunDE(scriptpath_deseq2,Rpath_deseq2,inpath_counts,inpath_design,outpath,refcond,compared):
-    
+    return genome_homer,out_dir_tag,out_prefix_bowtie2_list,out_prefix_anno_list,out_prefix_tag_list,prefix,scriptpath_homer_annotag,scriptpath_homer_diffpeak,refcond,compared,refcond_list,compared_list
+
+def homer_RunAnnoTag(genome_homer,out_prefix_bowtie2_list,out_prefix_anno_list,out_prefix_tag_list,scriptpath_homer_annotag):
+     
     global project_name
     
     jobid = []
-    command = "source "+scriptpath_deseq2+" "+Rpath_deseq2+" "+inpath_counts+"/count_matrix.txt"+" "+inpath_design+"/design_matrix.txt"+" "+outpath+" "+refcond+" "+compared+" "+project_name
-    job = os.popen(command).read().splitlines()
+    for i in range(len(bed_list)):
+        command = "source "+scriptpath_homer_annotag+" "+out_prefix_bowtie2_list[i]+" "+out_prefix_tag_list[i]+" "+out_prefix_anno_list[i]+" "+genome_homer+" "+project_name
+        job = os.popen(command).read().strip().splitlines()
+        #job = os.popen(command).read().splitlines()
+        print(job)
+        jobid.append(job[0].split(' ')[2])
+    
+    return jobid
+
+def homer_RunDiffPeak(genome_homer,out_dir_tag,scriptpath_homer_diffpeak,refcond,compared,refcond_list,compared_list):
+     
+    global project_name
+    
+    jobid = []
+    command = "source "+scriptpath_homer_diffpeak+" "+out_dir_tag+" "+refcond_list+" "+compared_list+" "+genome_homer+" "+refcond+" "+compared+" "+project_name
+    job = os.popen(command).read().strip().splitlines()
+    #job = os.popen(command).read().splitlines()
     print(job)
     jobid.append(job[0].split(' ')[2])
-
+    
     return jobid
     
 def visualization_PrepDirect():
     
     print("========================================")
-    print("Specify the path to folder containing design_matrix.txt used for DE:")
-    inpath_design = input()
+    print("Specify genome:(e.g human, mouse, etc)")
+    genome = input()
     print("========================================")
-    print("Specify the path to folder containing DESeq2 results:")
-    outpath = input()
+    print("Specify the path to MACS2/BED folder from peak calling:")
+    out_peak = input()
     print("========================================")
-    print("Which phenotype/condition/replicate/batch should be the reference/baseline?(e.g control)")
-    refcond = input()
+    
+    return genome,out_peak+"/"
+    
+def visualization_Prep(genome,out_peak):
+    
+    if os.path.exists("../../csl_results/"+project_name+"/log/output_genomeTracks.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_genomeTracks.txt"):
+        os.remove("../../csl_results/"+project_name+"/log/output_genomeTracks.txt")
+        os.remove("../../csl_results/"+project_name+"/log/error_genomeTracks.txt")
+    
     print("========================================")
-    print("Which phenotype/condition/replicate/batch to compare?(e.g treated)")
-    compared = input()
+    print("Specify which genome region to plot tracks:(e.g chr1:2700000-2800000")
+    region = input()
+    print("========================================")
     
-    return inpath_design+"/",outpath+"/",refcond,compared
-    
-def visualization_heatmap(inpath_design,outpath,refcond,compared):
+    prefix = pd.Series(os.listdir(os.path.expanduser(out_peak)))
 
-    print("Provide path to folder containing genelist.txt (max 50 genes). To plot the top 50 differential genes from DESeq2 instead, type 'top50'")
-    genepath = input()
-    if genepath == "top50":
-        genelist = pd.read_table(outpath+'/DEG_'+compared+'_vs_'+refcond+'(ref).txt',index_col=0)
-        genes = genelist.index[:50]
-    else:
-        genelist = pd.read_table(genepath+'/genelist.txt',index_col=0,header=None)
-        genes = genelist.index[:50]
+    macs2_prefix_list = out_peak+'/'+prefix+'/'
     
-    design = pd.read_table(inpath_design+"/design_matrix.txt",index_col=0)
-    design = design.iloc[:,:len(design.columns)-1]
-    count_norm = pd.read_table(outpath+'/normalized_counts.txt',index_col=0)
-    count_norm = count_norm.drop(['DESCRIPTION'],axis=1)
-    count_norm_sig = count_norm[count_norm.index.isin(genes)]
-    plt.rcParams['figure.dpi'] = 300
-    plt.rcParams['savefig.dpi'] = 300 
-    for i in range(len(design.columns)):
-        lut = dict(zip(design.iloc[:,i].unique(), sns.color_palette("Pastel2")))
-        col_colors = design.iloc[:,i].map(lut)
-        heat = sns.clustermap(count_norm_sig,z_score=0,cmap='vlag',col_colors=col_colors)
-        heat.savefig(outpath+"/heatmap_"+design.columns[i]+".png")
-
-    return heat
-
-def visualization_peakHeatmap(design_var):
-
-    global project_name
-    outpath = "../../csl_results/"+project_name+"/data/deseq2/"
+    tracks_dir = "../../csl_results/"+project_name+"/data/genomeTracks/"
+    os.makedirs(tracks_dir,exist_ok=True)
     
-    print("Here's the list of phenotype/condition/replicate/batch:")
-    print("Index")
-    design_var = pd.DataFrame(design_var)
-    print(design_var)
-    print("==================================")
-    print("Which index of phenotype/condition/replicate/batch to view PC plot?")
-    inpca = int(input())
+    scriptpath_tracks = '../scripts_DoNotTouch/genomeTracks/qsub_genomeTracks.sh'
     
-    return outpath+"/",inpca,design_var
+    if genome == 'mouse':
+        genome_index_path = "/grid/bsr/data/data/utama/genome/GRCm39_M29_gencode/gencode.vM29.annotation.gtf"
+    elif genome == 'human':
+        genome_index_path = "/grid/bsr/data/data/utama/genome/hg38_p13_gencode/gencode.v42.chr_patch_hapl_scaff.annotation.gtf"
+    
+    return genome_index_path,scriptpath_tracks,tracks_dir,macs2_prefix_list,region
+    
+def visualization_MakeTracks(genome_index_path,scriptpath_tracks,tracks_dir,macs2_prefix_list,region):
+    
+    peak_list = ""
+    for i in range(len(macs2_prefix_list)):
+        if i == 0:
+            peak_list += macs2_prefix_list[i]
+        else:
+            peak_list += " "+macs2_prefix_list[i]
+    
+    jobid = []
+    command = "source "+scriptpath_tracks+" "+genome_index_path+" "+peak_list+" "+tracks_dir+" "+region+" "+project_name
+    job = os.popen(command).read().strip().splitlines()
+    #job = os.popen(command).read().splitlines()
+    print(job)
+    jobid.append(job[0].split(' ')[2])
+    
+    return jobid
+
+def visualization_PlotTracks(tracks_dir):
+
+    trackplot = IFrame(tracks_dir+"/"+"genomeTracks.png", width=800, height=800)
+    
+    return trackplot
