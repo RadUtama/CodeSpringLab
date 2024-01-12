@@ -565,7 +565,7 @@ def macs2_Prep(genome,out_dir,pairing):
     #if removeDup == "y":
     #    bed_list = out_dir+prefix+'/'+prefix+'Aligned.sortedByName_removeDup.out.bed'
     #else:
-        bed_list = out_dir+prefix+'/'+prefix+'Aligned.sortedByName.out.bed'
+    bed_list = out_dir+prefix+'/'+prefix+'Aligned.sortedByName.out.bed'
     
     macs2_prefix_list = macs2_dir+prefix+'/'
 
