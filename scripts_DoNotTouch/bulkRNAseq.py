@@ -273,17 +273,26 @@ def fastqc_Prep(directory):
         os.remove("../../csl_results/"+project_name+"/log/output_fastQC.txt")
         os.remove("../../csl_results/"+project_name+"/log/error_fastQC.txt")
     
+    folder_fastqc = "fastqc"
+    print("========================================")
+    print("If you have trimmed the adapters with cutadapt prior, do you want to use these trimmed reads instead?:(y/n)")
+    usetrim = input()
+    if usetrim == 'y':
+        directory = "../../csl_results/"+project_name+"/data/cutadapt/"
+        folder_fastqc = "fastqc_cutadapt"
+    print("========================================")
+    
     readlist = pd.Series(os.listdir(directory))
     readlist = readlist[readlist.str.endswith('fastq.gz')]
     
-    outdir_fastqc = "../../csl_results/"+project_name+"/data/fastqc/"
+    outdir_fastqc = "../../csl_results/"+project_name+"/data/"+folder_fastqc+"/"
     os.makedirs(outdir_fastqc,exist_ok=True)
     
-    print("FastQC results will be stored in ../../csl_results/"+project_name+"/data/fastqc/")
+    print("FastQC results will be stored in ../../csl_results/"+project_name+"/data/"+folder_fastqc+"/")
     
     scriptpath_fastqc = '../scripts_DoNotTouch/FastQC/qsub_fastqc.sh'
 
-    return readlist,outdir_fastqc,scriptpath_fastqc
+    return readlist,directory,outdir_fastqc,scriptpath_fastqc
 
 def fastqc_PrepDirect():
     
@@ -337,9 +346,9 @@ def fastqc_Visualization(outdir_fastqc):
 def cutadapt_Prep(directory,pairing):
     
     global project_name
-    if os.path.exists("../../csl_results/"+project_name+"/log/output_Cutadapt.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_Cutadapt.txt"):
-        os.remove("../../csl_results/"+project_name+"/log/output_Cutadapt.txt")
-        os.remove("../../csl_results/"+project_name+"/log/error_Cutadapt.txt")
+    if os.path.exists("../../csl_results/"+project_name+"/log/output_cutadapt.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_cutadapt.txt"):
+        os.remove("../../csl_results/"+project_name+"/log/output_cutadapt.txt")
+        os.remove("../../csl_results/"+project_name+"/log/error_cutadapt.txt")
     
     readlist = pd.Series(os.listdir(directory))
     readlist = readlist[readlist.str.endswith('fastq.gz')]
@@ -408,6 +417,18 @@ def cutadapt_RunTrimming(adapter,adapter2,minlen,read1_list,read2_list,trimmed1_
 def star_Prep(genome,pairing,read_dir):
         
     global project_name
+
+    if os.path.exists("../../csl_results/"+project_name+"/log/output_star.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_star.txt"):
+        os.remove("../../csl_results/"+project_name+"/log/output_star.txt")
+        os.remove("../../csl_results/"+project_name+"/log/error_star.txt")
+    
+    print("========================================")
+    print("If you have trimmed the adapters with cutadapt prior, do you want to use these trimmed reads instead?:(y/n)")
+    usetrim = input()
+    if usetrim == 'y':
+        read_dir = "../../csl_results/"+project_name+"/data/cutadapt/"
+    print("========================================")
+    
     prefix = pd.Series(os.listdir(read_dir))
     prefix = prefix[prefix.str.endswith('fastq.gz')]
     prefix = prefix.str.replace('_R1_001.fastq.gz','',regex=False).str.replace('_R2_001.fastq.gz','',regex=False).unique()
