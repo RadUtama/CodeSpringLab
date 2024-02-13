@@ -1,4 +1,4 @@
-#!/bin/sh
+# !/bin/sh
 
 module load EBModules
 module load cutadapt/4.4-GCCcore-12.2.0
@@ -7,6 +7,6 @@ module load cutadapt/4.4-GCCcore-12.2.0
 #conda init bash
 #conda activate cutadapt
 
-cutadapt -j 4 -m $1 -a $2 -o $3 $5
+cutadapt -j 4 -m $1 -a $2 -o $4 $6
 
 #conda deactivate
