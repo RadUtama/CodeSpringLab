@@ -130,11 +130,13 @@ def filetransfer_Prep():
         print("\033[91m"+"If you want to use our example dataset, copy and paste this path below,"+"\x1b[0m")
         print("../scripts_DoNotTouch/test/fastq/")
         read_path_original = input()
+        read_path_original = os.path.expanduser(read_path_original)
         print("==================================")
         print("Copy the path to design matrix folder (If it's in your home folder, type tilde sign ~):")
         print("\033[91m"+"If you want to use our example dataset, copy and paste this path below,"+"\x1b[0m")
         print("../scripts_DoNotTouch/test/manifest/")
         inpath_design = input()
+        inpath_design = os.path.expanduser(inpath_design)
         print("==================================")
         print("You'll be working with "+"\033[91m"+project_name+"\x1b[0m"+" folder")
         print("Re-running any cell will overwrite exisiting outputs in folder "+"\033[91m"+project_name+"\x1b[0m")
@@ -299,6 +301,7 @@ def fastqc_PrepDirect():
     print("========================================")
     print("Specify the path to fastq folder used for QC:")
     read_path_destination = input()
+    read_path_destination = os.path.expanduser(read_path_destination)
     print("========================================")
     
     return read_path_destination+"/"
@@ -396,6 +399,7 @@ def cutadapt_PrepDirect():
     print("========================================")
     print("Specify the path to fastq folder used for adapter trimming:")
     read_path_destination = input()
+    read_path_destination = os.path.expanduser(read_path_destination)
     print("========================================")
     
     return read_path_destination+"/"
@@ -467,6 +471,7 @@ def star_PrepDirect():
     print("========================================")
     print("Specify the path to fastq folder used for alignment:")
     read_path_destination = input()
+    read_path_destination = os.path.expanduser(read_path_destination)
     print("========================================")
     
     return genome,pairing,read_path_destination+"/"
@@ -578,6 +583,7 @@ def featurecounts_PrepDirect():
     print("========================================")
     print("Specify the path to alignment folder used for quantification:")
     out_dir = input()
+    out_dir = os.path.expanduser(out_dir)
     print("========================================")
     
     return genome,pairing,out_dir+"/"
@@ -665,9 +671,11 @@ def deseq2_PrepDirect():
     print("========================================")
     print("Specify the path to folder containing count_matrix.txt used for DE:")
     outpath_counts = input()
+    outpath_counts = os.path.expanduser(outpath_counts)
     print("========================================")
     print("Specify the path to folder containing design_matrix.txt used for DE:")
     inpath_design = input()
+    inpath_design = os.path.expanduser(inpath_design)
     print("========================================")
     
     return outpath_counts+"/",inpath_design+"/"
@@ -689,9 +697,11 @@ def visualization_PrepDirect():
     print("========================================")
     print("Specify the path to folder containing design_matrix.txt used for DE:")
     inpath_design = input()
+    inpath_design = os.path.expanduser(inpath_design)
     print("========================================")
     print("Specify the path to folder containing DESeq2 results:")
     outpath = input()
+    outpath = os.path.expanduser(outpath)
     print("========================================")
     print("Which phenotype/condition/replicate/batch should be the reference/baseline?(e.g control)")
     refcond = input()
