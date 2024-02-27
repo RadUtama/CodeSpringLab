@@ -556,8 +556,10 @@ def featurecounts_Prep(genome,out_dir,pairing):
     
     if genome == 'mouse':
         GTF = "/grid/bsr/data/data/utama/genome/GRCm39_M29_gencode/gencode.vM29.annotation.gtf"
+        strandBED = "/grid/bsr/data/data/utama/genome/GRCm39_M29_gencode/gencode.vM29.annotation_forStrandDetect_geneID.bed"
     elif genome == 'human':
         GTF = "/grid/bsr/data/data/utama/genome/hg38_p13_gencode/gencode.v42.chr_patch_hapl_scaff.annotation.gtf"
+        strandBED = "/grid/bsr/data/data/utama/genome/hg38_p13_gencode/gencode.v42.chr_patch_hapl_scaff.annotation_forStrandDetect_geneID.bed"
     
     if pairing == "y":
         scriptpath_featurecounts = '../scripts_DoNotTouch/featureCounts/qsub_featurecounts_PE.sh'
@@ -570,7 +572,7 @@ def featurecounts_Prep(genome,out_dir,pairing):
     count_prefix_list = count_dir+prefix+'/'+prefix
     bam_list = out_dir+prefix+'/'+prefix+'Aligned.sortedByCoord.out.bam'
 
-    return scriptpath_featurecounts,GTF,bam_list,count_prefix_list,prefix,feature
+    return scriptpath_featurecounts,GTF,bam_list,count_prefix_list,prefix,feature,strandBED
 
 def featurecounts_PrepDirect():
     
@@ -588,13 +590,13 @@ def featurecounts_PrepDirect():
     
     return genome,pairing,out_dir+"/"
 
-def featurecounts_RunQuantification(scriptpath_featurecounts,GTF,bam_list,count_prefix_list,feature):
+def featurecounts_RunQuantification(scriptpath_featurecounts,GTF,bam_list,count_prefix_list,feature,strandBED):
      
     global project_name
     
     jobid = []
     for i in range(len(bam_list)):
-        command = "source "+scriptpath_featurecounts+" "+bam_list[i]+" "+GTF+" "+feature+" "+count_prefix_list[i]+" "+project_name
+        command = "source "+scriptpath_featurecounts+" "+bam_list[i]+" "+GTF+" "+feature+" "+count_prefix_list[i]+" "+strandBED+" "+project_name
         job = os.popen(command).read().splitlines()
         print(job)
         jobid.append(job[0].split(' ')[2])
