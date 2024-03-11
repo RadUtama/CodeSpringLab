@@ -628,7 +628,120 @@ def featurecounts_CreateCountMatrix():
     count_matrix.to_csv(outpath_counts+'count_matrix.txt',sep='\t')
 
     return outpath_counts,count_matrix
+
+def rsem_Prep(genome,out_dir,pairing):
     
+    global project_name
+    if os.path.exists("../../csl_results/"+project_name+"/log/output_rsem.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_rsem.txt"):
+        os.remove("../../csl_results/"+project_name+"/log/output_rsem.txt")
+        os.remove("../../csl_results/"+project_name+"/log/error_rsem.txt")
+    
+    prefix = pd.Series(os.listdir(out_dir))
+    
+    count_dir = "../../csl_results/"+project_name+"/data/rsem/"
+   
+    for i in range(len(prefix)):
+        os.makedirs(count_dir+prefix[i],exist_ok=True)
+    
+    if genome == 'mouse':
+        rsem_index = "/grid/bsr/data/data/utama/genome/mouse_rsem_index_star_gencode_GRCm39_M29_v2.7.10a/mouse_gencode"
+        strandBED = "/grid/bsr/data/data/utama/genome/GRCm39_M29_gencode/gencode.vM29.annotation_forStrandDetect_geneID.bed"
+    elif genome == 'human':
+        rsem_index = "/grid/bsr/data/data/utama/genome/human_rsem_index_star_gencode_hg38_p13_rel42_v2.7.10a/human_gencode"
+        strandBED = "/grid/bsr/data/data/utama/genome/hg38_p13_gencode/gencode.v42.chr_patch_hapl_scaff.annotation_forStrandDetect_geneID.bed"
+    
+    if pairing == "y":
+        scriptpath_rsem = '../scripts_DoNotTouch/RSEM/qsub_RSEM_PE.sh'
+    else:
+        scriptpath_rsem = '../scripts_DoNotTouch/RSEM/qsub_RSEM_SE.sh'
+
+    feature = "gene_id"
+    
+    count_prefix_list = count_dir+prefix+'/'+prefix
+    bam_list = out_dir+prefix+'/'+prefix+'Aligned.sortedByCoord.out.bam'
+    bamTranscript_list = out_dir+prefix+'/'+prefix+'Aligned.toTranscriptome.out.bam'
+
+    return scriptpath_rsem,rsem_index,bam_list,count_prefix_list,prefix,feature,strandBED,bamTranscript_list
+
+def rsem_PrepDirect():
+    
+    print("========================================")
+    print("Specify genome:(e.g human, mouse, etc)")
+    genome = input()
+    print("========================================")
+    print("Are the reads paired-end:(e.g y/n)")
+    pairing = input()
+    print("========================================")
+    print("Specify the path to alignment folder used for quantification:")
+    out_dir = input()
+    out_dir = os.path.expanduser(out_dir)
+    print("========================================")
+    
+    return genome,pairing,out_dir+"/"
+
+def rsem_RunQuantification(scriptpath_rsem,rsem_index,bam_list,count_prefix_list,feature,strandBED,bamTranscript_list):
+     
+    global project_name
+    
+    jobid = []
+    for i in range(len(bam_list)):
+        command = "source "+scriptpath_rsem+" "+bam_list[i]+" "+rsem_index+" "+feature+" "+count_prefix_list[i]+" "+strandBED+" "+bamTranscript_list[i]+" "+project_name
+        job = os.popen(command).read().splitlines()
+        print(job)
+        jobid.append(job[0].split(' ')[2])
+    
+    return jobid
+    
+def rsem_CreateCountMatrix():
+
+    global project_name
+    inpath_counts = "../../csl_results/"+project_name+"/data/rsem/"
+    outpath_counts = "../../csl_results/"+project_name+"/data/counts/"
+    print("Count matrix is stored in ../../csl_results/"+project_name+"/data/counts/")
+
+    filelist=sorted([f for f in os.listdir(inpath_counts) if not f.startswith('.')])
+
+    i = 0
+
+    for file in filelist:
+        i += 1
+        gene_df = pd.read_table(os.path.join(inpath_counts,file,file+'.genes.results'),comment='#',header=[0],index_col=[0])
+        isoform_df = pd.read_table(os.path.join(inpath_counts,file,file+'.isoforms.results'),comment='#',header=[0],index_col=[0])
+        
+        gene_tpm_raw = gene_df.drop(['transcript_id(s)','length','effective_length','expected_count','FPKM'],axis=1)
+        gene_fpkm_raw = gene_df.drop(['transcript_id(s)','length','effective_length','expected_count','TPM'],axis=1)
+        
+        isoform_tpm_raw = isoform_df.drop(['length','effective_length','expected_count','IsoPct','FPKM'],axis=1)
+        isoform_fpkm_raw = isoform_df.drop(['length','effective_length','expected_count','IsoPct','TPM'],axis=1)
+        
+        gene_tpm_raw = gene_tpm_raw.rename({gene_tpm_raw.columns[0]:file},axis='columns')
+        gene_fpkm_raw = gene_fpkm_raw.rename({gene_fpkm_raw.columns[0]:file},axis='columns')
+        isoform_tpm_raw = isoform_tpm_raw.rename({isoform_tpm_raw.columns[1]:file},axis='columns')
+        isoform_fpkm_raw = isoform_fpkm_raw.rename({isoform_fpkm_raw.columns[1]:file},axis='columns')
+        
+        if i == 1 :
+            gene_tpm_matrix = gene_tpm_raw
+            gene_fpkm_matrix = gene_fpkm_raw
+            isoform_tpm_matrix = isoform_tpm_raw
+            isoform_fpkm_matrix = isoform_fpkm_raw
+        else :
+            gene_tpm_matrix = pd.concat([gene_tpm_matrix,gene_tpm_raw],axis=1)
+            gene_fpkm_matrix = pd.concat([gene_fpkm_matrix,gene_fpkm_raw],axis=1)
+            
+            isoform_tpm_raw = isoform_tpm_raw.drop(['gene_id'],axis=1)
+            isoform_fpkm_raw = isoform_fpkm_raw.drop(['gene_id'],axis=1)
+            
+            isoform_tpm_matrix = pd.concat([isoform_tpm_matrix,isoform_tpm_raw],axis=1)
+            isoform_fpkm_matrix = pd.concat([isoform_fpkm_matrix,isoform_fpkm_raw],axis=1)
+
+    gene_tpm_matrix.to_csv(outpath_counts+'gene_tpm_matrix.txt',sep='\t')
+    gene_fpkm_matrix.to_csv(outpath_counts+'gene_fpkm_matrix.txt',sep='\t')
+    
+    isoform_tpm_matrix.to_csv(outpath_counts+'isoform_tpm_matrix.txt',sep='\t')
+    isoform_fpkm_matrix.to_csv(outpath_counts+'isoform_fpkm_matrix.txt',sep='\t')
+
+    return outpath_counts,gene_tpm_matrix,gene_fpkm_matrix,isoform_tpm_matrix,isoform_fpkm_matrix
+
 def deseq2_Prep(inpath_design):
     
     global project_name
