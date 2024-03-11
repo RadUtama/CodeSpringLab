@@ -5,6 +5,7 @@ module load STAR/2.7.10a-GCC-10.3.0
 ulimit -n 10000
 
 STAR --runThreadN 4 \
+--quantMode TranscriptomeSAM \
        --outFileNamePrefix $1 \
        --genomeLoad NoSharedMemory \
        --genomeDir $2 \
