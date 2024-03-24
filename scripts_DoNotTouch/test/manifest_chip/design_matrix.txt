@@ -1,5 +1,0 @@
-sample	day	filename
-CD4_day1_rep1	day1	CD4_day1_rep1_R1_001.fastq.gz
-CD4_day1_rep2	day1	CD4_day1_rep2_R1_001.fastq.gz
-CD4_day3_rep1	day3	CD4_day3_rep1_R1_001.fastq.gz
-CD4_day3_rep2	day3	CD4_day3_rep2_R1_001.fastq.gz
