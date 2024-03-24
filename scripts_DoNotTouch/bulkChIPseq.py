@@ -523,14 +523,16 @@ def bowtie2_ListDir(directory):
     return log_matrix
 
 
-def macs2_Prep(genome,out_dir,pairing):
+def macs2_Prep(genome,out_dir,pairing,inpath_design):
     
     global project_name
     if os.path.exists("../../csl_results/"+project_name+"/log/output_macs2.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_macs2.txt"):
         os.remove("../../csl_results/"+project_name+"/log/output_macs2.txt")
         os.remove("../../csl_results/"+project_name+"/log/error_macs2.txt")
     
-    prefix = pd.Series(os.listdir(os.path.expanduser(out_dir)))
+    design = pd.read_table(inpath_design+'/design_matrix.txt',index_col=0)
+    prefix = pd.Series(design.index)
+    #prefix = pd.Series(os.listdir(os.path.expanduser(out_dir)))
     
     macs2_dir = "../../csl_results/"+project_name+"/data/macs2/"
    
@@ -577,8 +579,12 @@ def macs2_PrepDirect():
     out_dir = input()
     out_dir = os.path.expanduser(out_dir)
     print("========================================")
+    print("Specify the path to design_matrix.txt:")
+    inpath_design = input()
+    inpath_design = os.path.expanduser(inpath_design)
+    print("========================================")
     
-    return genome,pairing,out_dir+"/"
+    return genome,pairing,out_dir+"/",inpath_design+"/"
 
 def macs2_RunPeakCalling(scriptpath_macs2,genomesize,chromsize,bed_list,macs2_prefix_list,prefix,anno_onlyChrNoMito,inpath_design):
      
@@ -613,7 +619,7 @@ def macs2_RunPeakCalling(scriptpath_macs2,genomesize,chromsize,bed_list,macs2_pr
     pattern_refcond = '|'.join(refcond_names)
     #input_bed_list = bed_list_df[bed_list_df.isin(refcond_names).any(1).values]
     input_bed_list = bed_list[bed_list.str.contains(pattern_refcond)]
-    input_bed_list.index = [0,1]
+    input_bed_list.index = list(range(len(input_bed_list)))
     
     compared_names = design[design.isin([compared]).any(axis=1)].index
     pattern_compared = '|'.join(compared_names)
@@ -621,14 +627,12 @@ def macs2_RunPeakCalling(scriptpath_macs2,genomesize,chromsize,bed_list,macs2_pr
     chip_bed_list = bed_list[bed_list.str.contains(pattern_compared)]
     prefix = prefix[prefix.isin(compared_names)]
     macs2_prefix_list = macs2_prefix_list[macs2_prefix_list.str.contains(pattern_compared)]
-    input_bed_list.index = chip_bed_list.index
+    #input_bed_list.index = chip_bed_list.index
+    chip_bed_list.index = input_bed_list.index
+    prefix.index = input_bed_list.index
+    macs2_prefix_list.index = input_bed_list.index
 
     ################################################
-    
-    print(chip_bed_list)
-    print(input_bed_list)
-    print(prefix)
-    print(macs2_prefix_list)
     
     jobid = []
     for i in range(len(chip_bed_list)):
@@ -644,7 +648,7 @@ def macs2_PeakList():
     
     global project_name
     
-    outpath = "../../csl_results/cd4/data/macs2/"
+    outpath = "../../csl_results/"+project_name+"/data/macs2/"
     dirlist = DataFrame(pd.Series(os.listdir(outpath)))
     dirlist.index = range(len(dirlist))
     print(dirlist)
