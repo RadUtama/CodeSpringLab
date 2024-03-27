@@ -611,7 +611,7 @@ def macs2_PeakList():
     
     global project_name
     
-    outpath = "../../csl_results/cd4/data/macs2/"
+    outpath = "../../csl_results/"+project_name+"/data/macs2/"
     dirlist = DataFrame(pd.Series(os.listdir(outpath)))
     dirlist.index = range(len(dirlist))
     print(dirlist)
