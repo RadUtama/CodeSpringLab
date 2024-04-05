@@ -17,10 +17,13 @@ macs2 callpeak --keep-dup auto --nomodel \
 	${4} \
 	${5}/${1}_treat_pileup.bw
 
+#module load Anaconda3/2023.03-1
+#conda activate deeptools
 
-module load Anaconda3/2023.03-1
+module load EBModules
+module load deepTools/3.5.2-foss-2022a
 
-conda activate deeptools
+### TSS was used for workshop instead of center 
     
 computeMatrix reference-point -p 4 \
     --referencePoint TSS \
@@ -47,4 +50,4 @@ plotHeatmap -m ${5}/${1}_TSS.gz \
 #plotHeatmap -m ${5}/${1}_peakCenter.gz \
 #    -out ${5}/${1}_heatmap_peakCenter.png \
 
-conda deactivate
+#conda deactivate
