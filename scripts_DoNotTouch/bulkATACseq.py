@@ -551,6 +551,11 @@ def macs2_Prep(genome,out_dir,pairing):
    
     for i in range(len(prefix)):
         os.makedirs(macs2_dir+prefix[i],exist_ok=True)
+
+    print("========================================")
+    print("Please set the q-value cutoff (default 0.05):")
+    qval = input()
+    print("========================================")
     
     if genome == 'mouse':
         genomesize = "1.87e+9"
@@ -575,7 +580,7 @@ def macs2_Prep(genome,out_dir,pairing):
     
     macs2_prefix_list = macs2_dir+prefix+'/'
 
-    return scriptpath_macs2,genomesize,chromsize,bed_list,macs2_prefix_list,prefix,anno_onlyChrNoMito,macs2_dir
+    return scriptpath_macs2,genomesize,chromsize,bed_list,macs2_prefix_list,prefix,anno_onlyChrNoMito,macs2_dir,qval
 
 def macs2_PrepDirect():
     
@@ -593,13 +598,13 @@ def macs2_PrepDirect():
     
     return genome,pairing,out_dir+"/"
 
-def macs2_RunPeakCalling(scriptpath_macs2,genomesize,chromsize,bed_list,macs2_prefix_list,prefix,anno_onlyChrNoMito):
+def macs2_RunPeakCalling(scriptpath_macs2,genomesize,chromsize,bed_list,macs2_prefix_list,prefix,anno_onlyChrNoMito,qval):
      
     global project_name
     
     jobid = []
     for i in range(len(bed_list)):
-        command = "source "+scriptpath_macs2+" "+prefix[i]+" "+bed_list[i]+" "+genomesize+" "+chromsize+" "+macs2_prefix_list[i]+" "+anno_onlyChrNoMito+" "+project_name
+        command = "source "+scriptpath_macs2+" "+prefix[i]+" "+bed_list[i]+" "+genomesize+" "+chromsize+" "+macs2_prefix_list[i]+" "+anno_onlyChrNoMito+" "+qval+" "+project_name
         job = os.popen(command).read().strip().splitlines()
         #job = os.popen(command).read().splitlines()
         print(job)
