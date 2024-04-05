@@ -6,7 +6,7 @@ module load MACS2/2.2.9.1-foss-2022b
 ## /grid/bsr/home/utama/.local/bin/macs2
 
 macs2 callpeak --nomodel \
-	-t ${2} \
+	-t ${2} -q ${7} \
 	-f BED -g ${3} \
 	--shift -100 --extsize 200 --bdg --call-summits \
 	-n ${1} --keep-dup  all \
