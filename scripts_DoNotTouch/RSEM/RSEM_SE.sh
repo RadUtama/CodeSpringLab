@@ -26,7 +26,7 @@ module load SAMtools/1.16.1-GCC-11.3.0
 
 ulimit -n 10000
 
-rsem-calculate-expression --strandedness ${strand} \
+rsem-calculate-expression -p 8 --strandedness ${strand} \
 	--bam $6 \
 	$2 \
 	$4
