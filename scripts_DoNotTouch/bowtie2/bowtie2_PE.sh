@@ -21,6 +21,10 @@ rm ${1}_temp3.sam
 samtools view -h -bS -o ${1}Aligned.sortedByName.out.bam ${1}Aligned.sortedByName.out.sam
 rm ${1}Aligned.sortedByName.out.sam
 
+samtools sort -o ${1}Aligned.sortedByCoord.out.bam ${1}Aligned.sortedByName.out.bam
+
+samtools index -o ${1}Aligned.sortedByCoord.out.bam.bai ${1}Aligned.sortedByCoord.out.bam
+
 #java -jar $EBROOTPICARD/picard.jar MarkDuplicates \
 #I=${1}Aligned.sortedByName.out.bam \
 #O=${1}Aligned.sortedByName_removeDup.out.bam \
