@@ -1,6 +1,6 @@
 
 def config():
-    print("Do you want to use your most recent project name, genome, design matrix, and reads folders:(e.g y/n)")
+    print("Do you want to use your most recent project name, genome, design matrix, and reads folders:(e.g y/n). If this is your first time, type n")
     param = input()
     if param == 'n':
         print("========================================")
