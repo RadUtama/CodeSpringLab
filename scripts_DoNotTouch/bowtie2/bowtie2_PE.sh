@@ -55,4 +55,35 @@ rm ${1}_insert_size_histogram.pdf
 bedtools bamtobed -i ${1}Aligned.sortedByName.out.bam > ${1}Aligned.sortedByName.out.bed
 #bedtools bamtobed -i ${1}Aligned.sortedByName_removeDup.out.bam > #${1}Aligned.sortedByName_removeDup.out.bed
 
-cat ../../csl_results/${5}/log/error_bowtie2.txt ${1}Log.final.out > ../../csl_results/${5}/log/error_bowtie2.txt
+rm ${1}Aligned.sortedByName.out.bam
+
+cat ../../csl_results/${7}/log/error_bowtie2.txt ${1}Log.final.out > ../../csl_results/${7}/log/error_bowtie2.txt
+
+#####################################
+
+module load EBModules
+module load deepTools/3.5.2-foss-2022a
+
+#--effectiveGenomeSize 2913022398 \ # Mice:2150570000; GRCh38:2913022398
+### For male mice chrX should be ignored
+
+bamCoverage -b ${1}Aligned.sortedByCoord.out.bam \
+--normalizeUsing RPGC \
+--effectiveGenomeSize ${5} \
+--binSize 10 \
+--extendReads \
+--ignoreForNormalization chrX chrM \
+--outFileFormat bedgraph \
+--outFileName ${1}Aligned.sortedByCoord.out.bdg
+
+awk '( $1 ~ /^chr/ && $1 != "chrM" && $1 != "chrUn" )' ${1}Aligned.sortedByCoord.out.bdg > ${1}Aligned.sortedByCoord_filtered.out.bdg
+
+rm ${1}Aligned.sortedByCoord.out.bdg
+
+# The third line is chromsize in macs2 step
+/grid/bsr/home/utama/bin/x86_64/bedGraphToBigWig \
+${1}Aligned.sortedByCoord_filtered.out.bdg \
+${6} \
+${1}Aligned.sortedByCoord.out.bw
+
+rm ${1}Aligned.sortedByCoord_filtered.out.bdg
