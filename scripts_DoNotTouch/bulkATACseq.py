@@ -447,8 +447,12 @@ def bowtie2_Prep(genome,pairing,read_dir):
     print("Bowtie2 alignment results will be stored in ../../csl_results/"+project_name+"/data/bowtie2/")
     
     if genome == 'mouse':
+        effgenomesize = "2654621783"
+        chromsize = "/grid/bsr/data/data/utama/genome/GRCm39_M29_gencode/chrom.sizes"
         genome_index_path = "/grid/bsr/data/data/utama/genome/GRCm39_M29_gencode/GRCm39_M29_gencode_bowtie2index/GRCm39_M29_gencode"
     elif genome == 'human':
+        effgenomesize = "2913022398"
+        chromsize = "/grid/bsr/data/data/utama/genome/hg38_p13_gencode/chrom.sizes"
         genome_index_path = "/grid/bsr/data/data/utama/genome/hg38_p13_gencode/hg38_p13_gencode_bowtie2index/hg38_p13_gencode"
     
     read1_list = read_dir+'/'+prefix+'_R1_001.fastq.gz'
@@ -460,7 +464,7 @@ def bowtie2_Prep(genome,pairing,read_dir):
     else:
         scriptpath_bowtie2 = '../scripts_DoNotTouch/bowtie2/qsub_bowtie2_SE.sh'
 
-    return genome_index_path,read1_list,read2_list,out_prefix_list,out_dir,scriptpath_bowtie2
+    return genome_index_path,read1_list,read2_list,out_prefix_list,out_dir,effgenomesize,chromsize,scriptpath_bowtie2
 
 def bowtie2_PrepDirect():
     
@@ -478,7 +482,7 @@ def bowtie2_PrepDirect():
     
     return genome,pairing,read_path_destination+"/"
 
-def bowtie2_RunAlignment(genome_index_path,read1_list,read2_list,out_prefix_list,out_dir,scriptpath_bowtie2):
+def bowtie2_RunAlignment(genome_index_path,read1_list,read2_list,out_prefix_list,out_dir,effgenomesize,chromsize,scriptpath_bowtie2):
         
     global project_name
     
@@ -487,7 +491,7 @@ def bowtie2_RunAlignment(genome_index_path,read1_list,read2_list,out_prefix_list
     
     jobid = []
     for i in range(len(out_prefix_list)):
-        command = "source "+scriptpath_bowtie2+" "+out_prefix_list[i]+" "+genome_index_path+" "+read1_list[i]+" "+read2_list[i]+" "+project_name
+        command = "source "+scriptpath_bowtie2+" "+out_prefix_list[i]+" "+genome_index_path+" "+read1_list[i]+" "+read2_list[i]+" "+effgenomesize+" "+chromsize+" "+project_name
         job = os.popen(command).read().strip().splitlines()
         #job = os.popen(command).read().splitlines()
         print(job)
