@@ -251,11 +251,19 @@ def filetransfer_Convert(directory,inpath_design):
 
     dirlist = pd.Series(os.listdir(directory))    
     dirlist = dirlist[dirlist.str.endswith('fastq.gz')]
+    dirlist.index = range(len(dirlist))
+    
     for i in range(len(dirlist)):
         for j in range(len(filename)):
             if dirlist[i] in filename[j]:
-                newname=des.iloc[j,0]+re.sub(r'^.*?_R', '_R', dirlist[i])
-                os.rename(directory+dirlist[i],directory+newname)
+                #newname=des.iloc[j,0]+re.sub(r'^.*?_R', '_R', dirlist[i])
+                #os.rename(directory+dirlist[i],directory+newname)
+                if dirlist.str.contains("_R1_")[i]:
+                    newname=des.iloc[j,0]+re.sub(r'^.*?_R1', '_R1', dirlist[i])
+                    os.rename(directory+dirlist[i],directory+newname)
+                elif dirlist.str.contains("_R2_")[i]:
+                    newname=des.iloc[j,0]+re.sub(r'^.*?_R2', '_R2', dirlist[i])
+                    os.rename(directory+dirlist[i],directory+newname)
      
     print("Here's the list of name-converted read files:")
     print("Index")
