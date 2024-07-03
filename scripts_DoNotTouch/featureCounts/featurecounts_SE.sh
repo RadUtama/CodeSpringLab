@@ -29,8 +29,8 @@ suffix=counts.txt
 featureCounts -a $2 \
         -T 2 \
         -t "exon" \
-        -g ${strand_idx} \
-        -s 0 \
+        -g $3 \
+        -s ${strand_idx} \
         -Q 12 \
         --minOverlap 1 \
         -o $4_${suffix} \
