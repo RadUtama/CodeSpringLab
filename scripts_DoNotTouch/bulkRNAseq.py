@@ -380,7 +380,9 @@ def cutadapt_Prep(directory,pairing):
     else:
         scriptpath_cutadapt = '../scripts_DoNotTouch/cutadapt_SE/qsub_cutadapt_SE.sh'
         read1_list = directory+'/'+prefix+'_R1_001.fastq.gz'
+        read2_list = directory +'/'+prefix+'_R2_001.fastq.gz'
         trimmed1_list = outdir_cutadapt+'/'+prefix+'_R1_001.fastq.gz'
+        trimmed2_list = outdir_cutadapt+'/'+prefix+'_R2_001.fastq.gz'
         
     print("========================================")
     print("Specify the adapter for R1/read1:")
