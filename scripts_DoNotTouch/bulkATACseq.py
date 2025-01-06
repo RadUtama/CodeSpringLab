@@ -583,12 +583,14 @@ def macs2_Prep(genome,out_dir,pairing):
     else:
         scriptpath_macs2 = '../scripts_DoNotTouch/MACS2/qsub_macs2_SE.sh'
 
-    #print("Remove all kinds of read duplicates:(e.g y/n)")
-    #removeDup = input()
-    #if removeDup == "y":
-    #    bed_list = out_dir+prefix+'/'+prefix+'Aligned.sortedByName_removeDup.out.bed'
-    #else:
-    bed_list = out_dir+prefix+'/'+prefix+'Aligned.sortedByName.out.bed'
+    print("========================================")
+    print("Remove all kinds of read duplicates:(e.g y/n)")
+    removeDup = input()
+    print("========================================")
+    if removeDup == "y":
+        bed_list = out_dir+prefix+'/'+prefix+'Aligned.sortedByCoord_removeDup.out.bed'
+    else:
+        bed_list = out_dir+prefix+'/'+prefix+'Aligned.sortedByCoord.out.bed'
     
     macs2_prefix_list = macs2_dir+prefix+'/'
 
