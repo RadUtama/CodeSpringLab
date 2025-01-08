@@ -525,6 +525,77 @@ def star_ListDir(directory):
     
     return log_matrix
 
+def kallisto_Prep(genome,pairing,read_dir):
+        
+    global project_name
+
+    if os.path.exists("../../csl_results/"+project_name+"/log/output_kallisto.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_kallisto.txt"):
+        os.remove("../../csl_results/"+project_name+"/log/output_kallisto.txt")
+        os.remove("../../csl_results/"+project_name+"/log/error_kallisto.txt")
+    
+    print("========================================")
+    print("If you have trimmed the adapters with cutadapt prior, do you want to use these trimmed reads instead?:(y/n)")
+    usetrim = input()
+    if usetrim == 'y':
+        read_dir = "../../csl_results/"+project_name+"/data/cutadapt/"
+    print("========================================")
+    
+    prefix = pd.Series(os.listdir(read_dir))
+    prefix = prefix[prefix.str.endswith('fastq.gz')]
+    prefix = prefix.str.replace('_R1_001.fastq.gz','',regex=False).str.replace('_R2_001.fastq.gz','',regex=False).unique()
+    
+    out_dir = "../../csl_results/"+project_name+"/data/kallisto/"
+   
+    for i in range(len(prefix)):
+        os.makedirs(out_dir+prefix[i],exist_ok=True)
+
+    print("Kallisto pseudo-alignment results will be stored in ../../csl_results/"+project_name+"/data/kallisto/")
+    
+    if genome == 'mouse':
+        genome_index_path = "/grid/bsr/data/data/utama/genome/GRCm39_M29_gencode/gencode.vM29.transcripts.idx"
+    elif genome == 'human':
+        genome_index_path = "/grid/bsr/data/data/utama/genome/hg38_p13_gencode/gencode.v45.transcripts.idx"
+    
+    read1_list = read_dir+'/'+prefix+'_R1_001.fastq.gz'
+    read2_list = read_dir+'/'+prefix+'_R2_001.fastq.gz'
+    out_prefix_list = out_dir+prefix+'/'
+    
+    if pairing == 'y':
+        scriptpath_kallisto = '../scripts_DoNotTouch/Kallisto/qsub_kallisto_PE.sh'
+    else:
+        scriptpath_kallisto = '../scripts_DoNotTouch/Kallisto/qsub_kallisto_SE.sh'
+
+    return genome_index_path,read1_list,read2_list,out_prefix_list,out_dir,scriptpath_kallisto
+
+def kallisto_PrepDirect():
+    
+    print("========================================")
+    print("Specify genome:(e.g human, mouse, etc)")
+    genome = input()
+    print("========================================")
+    print("Are the reads paired-end:(e.g y/n)")
+    pairing = input()
+    print("========================================")
+    print("Specify the path to fastq folder used for alignment:")
+    read_path_destination = input()
+    read_path_destination = os.path.expanduser(read_path_destination)
+    print("========================================")
+    
+    return genome,pairing,read_path_destination+"/"
+
+def kallisto_RunAlignment(genome_index_path,read1_list,read2_list,out_prefix_list,out_dir,scriptpath_kallisto):
+        
+    global project_name
+    
+    jobid = []
+    for i in range(len(out_prefix_list)):
+        command = "source "+scriptpath_kallisto+" "+out_prefix_list[i]+" "+genome_index_path+" "+read1_list[i]+" "+read2_list[i]+" "+project_name
+        job = os.popen(command).read().splitlines()
+        print(job)
+        jobid.append(job[0].split(' ')[2])
+    
+    return jobid
+
 def featurecounts_ListDir(prefix,count_prefix_list):
     
     global project_name
