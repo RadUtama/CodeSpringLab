@@ -5,7 +5,7 @@ module load MACS2/2.2.9.1-foss-2022b
 ## Alternative local installation:
 ## /grid/bsr/home/utama/.local/bin/macs2
 
-macs2 callpeak --keep-dup auto --nomodel \
+macs2 callpeak --keep-dup auto --nomodel --extsize 200 \
 	-t ${2} -c ${7} \
 	-f BED -g ${3} \
 	--bdg --call-summits \
