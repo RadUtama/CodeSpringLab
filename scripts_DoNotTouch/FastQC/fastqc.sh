@@ -1,6 +1,6 @@
 
-module load EBModules-LegacyBNB
-module load FastQC/0.11.8-Java-1.8
+module load EBModules
+module load FastQC/0.12.1-Java-11
 
 fastqc -t 4 -o $2 $1
 
