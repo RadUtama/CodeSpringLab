@@ -12,12 +12,6 @@ macs2 callpeak --nomodel \
 	-n ${1} --keep-dup  all \
 	--outdir ${5}
 
-## For ATAC-seq use normalized RPGC from bamCovarage in bowtie2 script instead of unnormalized treat_pileup.bdg
-/grid/bsr/home/utama/bin/x86_64/bedGraphToBigWig \
-	${5}/${1}Aligned.sortedByCoord_removeDup.out.bdg \
-	${4} \
-	${5}/${1}Aligned.sortedByCoord_removeDup.out.bw
-
 #module load Anaconda3/2023.03-1
 #conda activate deeptools
 
