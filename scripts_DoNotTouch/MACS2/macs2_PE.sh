@@ -33,7 +33,7 @@ computeMatrix reference-point -p 4 \
 #    --referencePoint center \
 #    -b 1000 -a 1000 \
 #    -R ${6} \
-#    -S ${5}/${1}_treat_pileup.bw \
+#    -S ${5}/${1}Aligned.sortedByCoord_removeDup.out.bw \
 #    --skipZeros \
 #    -o ${5}/${1}_peakCenter.gz \
 #    --outFileSortedRegions ${5}/${1}_genes_peakCenter.bed
