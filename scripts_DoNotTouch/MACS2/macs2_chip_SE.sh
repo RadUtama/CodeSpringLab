@@ -12,11 +12,6 @@ macs2 callpeak --keep-dup auto --nomodel --extsize 200 \
 	-n ${1} \
 	--outdir ${5}
 
-/grid/bsr/home/utama/bin/x86_64/bedGraphToBigWig \
-	${5}/${1}_treat_pileup.bdg \
-	${4} \
-	${5}/${1}_treat_pileup.bw
-
 #module load Anaconda3/2023.03-1
 #conda activate deeptools
 
@@ -33,21 +28,12 @@ computeMatrix reference-point -p 4 \
     --skipZeros \
     -o ${5}/${1}_TSS.gz \
     --outFileSortedRegions ${5}/${1}_genes_TSS.bed
-    
-#computeMatrix reference-point -p 4 \
-#    --referencePoint TSS \
-#    -b 1000 -a 1000 \
-#    -R ${6} \
-#    -S ${5}/${1}_treat_pileup.bw \
-#    --skipZeros \
-#    -o ${5}/${1}_TSS.gz \
-#    --outFileSortedRegions ${5}/${1}_genes_TSS.bed
 
 #computeMatrix reference-point -p 4 \
 #    --referencePoint center \
 #    -b 1000 -a 1000 \
 #    -R ${6} \
-#    -S ${5}/${1}_treat_pileup.bw \
+#    -S ${5}/${1}Aligned.sortedByCoord_removeDup.out.bw \
 #    --skipZeros \
 #    -o ${5}/${1}_peakCenter.gz \
 #    --outFileSortedRegions ${5}/${1}_genes_peakCenter.bed
