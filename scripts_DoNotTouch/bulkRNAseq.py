@@ -887,7 +887,161 @@ def deseq2_RunDE(scriptpath_deseq2,Rpath_deseq2,inpath_counts,inpath_design,outp
     jobid.append(job[0].split(' ')[2])
 
     return jobid
+
+def gseapy_Prep():
     
+    global project_name
+    
+    outpath_pathway = "../../csl_results/"+project_name+"/data/gseapy/"
+    os.makedirs(outpath_pathway,exist_ok=True)
+    print("GSEApy results are stored in ../../csl_results/"+project_name+"/data/gseapy/")
+
+    print("========================================")
+    print("Specify gene set database:(e.g MSigDB_Hallmark_2020, KEGG_2021_Human, GO_Biological_Process_2018)")
+    geneset = input()
+    
+    return geneset,outpath_pathway
+
+def gseapy_PrepDirect():
+
+    global project_name
+
+    outpath_pathway = "../../csl_results/"+project_name+"/data/gseapy/"
+    os.makedirs(outpath_pathway,exist_ok=True)
+    print("GSEApy results are stored in ../../csl_results/"+project_name+"/data/gseapy/")
+
+    print("========================================")
+    print("Specify genome:(e.g human, mouse, etc)")
+    genome = input()
+    
+    print("========================================")
+    print("Specify the genomic feature to quantify (e.g gene_name, gene_id, etc):")
+    feature = input() 
+    
+    print("========================================")
+    print("Specify the path to folder containing design_matrix.txt used for DE:")
+    inpath_design = input()
+    inpath_design = os.path.expanduser(inpath_design)
+
+    print("========================================")
+    print("Specify the path to folder containing normalized counts from DE:")
+    outpath = input()
+
+    print("========================================")
+    print("Which phenotype/condition/replicate/batch should be the reference/baseline?(e.g control)")
+    refcond = input()
+    
+    print("========================================")
+    print("Which phenotype/condition/replicate/batch to compare?(e.g treated)")
+    compared = input()
+
+    print("========================================")
+    print("Specify gene set database:(e.g MSigDB_Hallmark_2020, KEGG_2021_Human, GO_Biological_Process_2018)")
+    geneset = input()
+    
+    return geneset,genome,feature,inpath_design+"/",outpath+"/",outpath_pathway,refcond,compared
+
+def gseapy_RunPathway(geneset,genome,feature,inpath_design,outpath,outpath_pathway,refcond,compared):
+    
+    global project_name
+    
+    design = pd.read_table(inpath_design+'/design_matrix.txt',index_col=0)
+    class_vector = list(design['treatment'])
+    reordering = ['GENE','NAME']+list(design.index)
+
+    gene_exp = pd.read_table(outpath+'/normalized_counts_'+compared+'_vs_'+refcond+'(ref).txt',index_col=0)
+    gene_exp = gene_exp.drop(['DESCRIPTION'],axis=1)
+    gene_exp.index = gene_exp.index.str.split('.').str[0]
+    gene_exp['GENE'] = gene_exp.index
+    gene_exp['NAME'] = 'na'
+
+    #######################
+
+    bm = Biomart()
+    # note the dataset and attribute names are different
+    m2h = bm.query(dataset='mmusculus_gene_ensembl',
+                   attributes=['ensembl_gene_id','external_gene_name',
+                               'hsapiens_homolog_ensembl_gene',
+                               'hsapiens_homolog_associated_gene_name'])
+    h2m = bm.query(dataset='hsapiens_gene_ensembl',
+                   attributes=['ensembl_gene_id','external_gene_name',
+                               'mmusculus_homolog_ensembl_gene',
+                               'mmusculus_homolog_associated_gene_name'])
+    
+    if (genome == 'mouse') & (feature == 'gene_name'):        
+        gene_exp_conv = gene_exp.merge(m2h,how='inner',left_index=True,right_on='external_gene_name')
+        gene_exp_conv['GENE'] = gene_exp_conv['hsapiens_homolog_associated_gene_name']
+    elif (genome == 'mouse') & (feature == 'gene_id'):
+        gene_exp_conv = gene_exp.merge(m2h,how='inner',left_index=True,right_on='ensembl_gene_id')
+        gene_exp_conv['GENE'] = gene_exp_conv['hsapiens_homolog_associated_gene_name']       
+    elif (genome == 'human') & (feature == 'gene_id'):
+        gene_exp_conv = gene_exp.merge(h2m,how='inner',left_index=True,right_on='ensembl_gene_id')
+        gene_exp_conv['GENE'] = gene_exp_conv['external_gene_name']
+    elif (genome == 'human') & (feature == 'gene_name'):
+        gene_exp_conv = gene_exp
+    
+    gene_exp_conv = gene_exp_conv.dropna(subset=['GENE'])
+    gene_exp_conv = gene_exp_conv[reordering]
+
+    #############################
+    
+    gs = GSEA(data=gene_exp_conv,
+         gene_sets=geneset,
+         classes = class_vector, # cls=class_vector
+         # set permutation_type to phenotype if samples >=15
+         permutation_type='gene_set',
+         permutation_num=1000, # reduce number to speed up test
+         outdir=outpath_pathway,
+         method='signal_to_noise',
+         threads=4, seed= 8)
+    
+    gs.pheno_pos = compared
+    gs.pheno_neg = refcond
+    gs_res = gs.run()
+
+    pathways = pd.read_csv(outpath_pathway+'/gseapy.gene_set.gsea.report.csv',index_col=None)
+    pathways = pathways.sort_values(by=['FDR q-val'])
+    pathways.to_csv(outpath_pathway+'/gseapy.gene_set.gsea.report.csv',index=None)
+    terms = pathways.Term
+
+    return gs,gs_res,pathways,terms,project_name
+
+def gseapy_DotPlot(pathways,geneset):
+    
+    # to save your figure, make sure that ``ofname`` is not None
+    dot = dotplot(pathways,
+             column="FDR q-val",
+             title=geneset,
+             cmap=plt.cm.YlOrRd,
+             size=8,
+             figsize=(4,5), cutoff=1)
+    
+    return dot
+
+def gseapy_EnrichPlot(pathways,gs):
+
+    terms = pathways.Term
+
+    print("Specify index to visualize Enrichment plot of a selected pathway:(e.g 0)")
+    index_files = int(input())
+
+    enrich = gs.plot(terms[index_files]) # If choosing only 1 pathway
+
+    return enrich
+
+def gseapy_heatmap(pathways,gs):
+
+    terms = pathways.Term
+    
+    print("Specify index to visualize Heatmap plot of a selected pathway:(e.g 0)")
+    index_files = int(input())
+
+    genes = pathways.Lead_genes[index_files].split(";")
+    # Make sure that ``ofname`` is not None, if you want to save your figure to disk
+    heatgsea = heatmap(df = gs.heatmat.loc[genes], z_score=0, title=terms[index_files], figsize=(14,4))
+
+    return heatgsea
+
 def visualization_PrepDirect():
     
     print("========================================")
