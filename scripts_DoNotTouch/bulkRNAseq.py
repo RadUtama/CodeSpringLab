@@ -9,6 +9,8 @@ import shutil
 import seaborn as sns
 import matplotlib.pyplot as plt
 from pandas import DataFrame
+import gseapy as gp
+from gseapy import GSEA,Biomart,dotplot,heatmap
 
 project_name=config.project_name
 param=config.parameters_exist
