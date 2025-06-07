@@ -948,7 +948,8 @@ def gseapy_RunPathway(geneset,genome,feature,inpath_design,outpath,outpath_pathw
     global project_name
     
     design = pd.read_table(inpath_design+'/design_matrix.txt',index_col=0)
-    class_vector = list(design['treatment'])
+    vardesign = design.T[(design.T.iloc[:,0]==refcond) | (design.T.iloc[:,0]==compared)].T.columns[0]
+    class_vector = list(design[vardesign])
     reordering = ['GENE','NAME']+list(design.index)
 
     gene_exp = pd.read_table(outpath+'/normalized_counts_'+compared+'_vs_'+refcond+'(ref).txt',index_col=0)
