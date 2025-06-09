@@ -546,10 +546,10 @@ def kallisto_Prep(genome,pairing,read_dir):
     prefix = prefix[prefix.str.endswith('fastq.gz')]
     prefix = prefix.str.replace('_R1_001.fastq.gz','',regex=False).str.replace('_R2_001.fastq.gz','',regex=False).unique()
     
-    out_dir = "../../csl_results/"+project_name+"/data/kallisto/"
+    out_dir_kal = "../../csl_results/"+project_name+"/data/kallisto/"
    
     for i in range(len(prefix)):
-        os.makedirs(out_dir+prefix[i],exist_ok=True)
+        os.makedirs(out_dir_kal+prefix[i],exist_ok=True)
 
     print("Kallisto pseudo-alignment results will be stored in ../../csl_results/"+project_name+"/data/kallisto/")
     
@@ -560,14 +560,14 @@ def kallisto_Prep(genome,pairing,read_dir):
     
     read1_list = read_dir+'/'+prefix+'_R1_001.fastq.gz'
     read2_list = read_dir+'/'+prefix+'_R2_001.fastq.gz'
-    out_prefix_list = out_dir+prefix+'/'
+    out_prefix_list = out_dir_kal+prefix+'/'
     
     if pairing == 'y':
         scriptpath_kallisto = '../scripts_DoNotTouch/Kallisto/qsub_kallisto_PE.sh'
     else:
         scriptpath_kallisto = '../scripts_DoNotTouch/Kallisto/qsub_kallisto_SE.sh'
 
-    return genome_index_path,read1_list,read2_list,out_prefix_list,out_dir,scriptpath_kallisto
+    return genome_index_path,read1_list,read2_list,out_prefix_list,out_dir_kal,scriptpath_kallisto
 
 def kallisto_PrepDirect():
     
@@ -585,7 +585,7 @@ def kallisto_PrepDirect():
     
     return genome,pairing,read_path_destination+"/"
 
-def kallisto_RunAlignment(genome_index_path,read1_list,read2_list,out_prefix_list,out_dir,scriptpath_kallisto):
+def kallisto_RunAlignment(genome_index_path,read1_list,read2_list,out_prefix_list,out_dir_kal,scriptpath_kallisto):
         
     global project_name
     
