@@ -224,8 +224,8 @@ def filetransfer_Copy(read_path_original,scriptpath_copy):
 
     command = "source "+scriptpath_copy+" "+read_path_original+" "+"../../csl_results/"+project_name+"/data/fastq"+" "+project_name
     job = os.popen(command).read().splitlines()
-    print(job)
-    jobid.append(job[0].split(' ')[2])
+    print(job[1])
+    jobid.append(job[1].split(' ')[2])
     
     return jobid
 
@@ -324,9 +324,9 @@ def fastqc_RunQC(readlist,outdir_fastqc,read_path_destination,scriptpath_fastqc)
     for file in readlist:
         command = "source "+scriptpath_fastqc+" "+read_path_destination+file+" "+outdir_fastqc+"/."+" "+project_name 
         job = os.popen(command).read().splitlines()
-        print(job)
+        print(job[1])
         
-        jobid.append(job[0].split(' ')[2])
+        jobid.append(job[1].split(' ')[2])
     
     return jobid
 
@@ -424,9 +424,9 @@ def cutadapt_RunTrimming(adapter,adapter2,minlen,read1_list,read2_list,trimmed1_
     for i in range(len(read1_list)):
         command = "source "+scriptpath_cutadapt+" "+minlen+" "+adapter+" "+adapter2+" "+trimmed1_list[i]+" "+trimmed2_list[i]+" "+read1_list[i]+" "+read2_list[i]+" "+project_name 
         job = os.popen(command).read().splitlines()
-        print(job)
+        print(job[1])
         
-        jobid.append(job[0].split(' ')[2])
+        jobid.append(job[1].split(' ')[2])
     
     return jobid
 
@@ -496,8 +496,8 @@ def star_RunAlignment(genome_index_path,read1_list,read2_list,out_prefix_list,ou
     for i in range(len(out_prefix_list)):
         command = "source "+scriptpath_star+" "+out_prefix_list[i]+" "+genome_index_path+" "+read1_list[i]+" "+read2_list[i]+" "+project_name
         job = os.popen(command).read().splitlines()
-        print(job)
-        jobid.append(job[0].split(' ')[2])
+        print(job[1])
+        jobid.append(job[1].split(' ')[2])
     
     return jobid
 
@@ -593,8 +593,8 @@ def kallisto_RunAlignment(genome_index_path,read1_list,read2_list,out_prefix_lis
     for i in range(len(out_prefix_list)):
         command = "source "+scriptpath_kallisto+" "+out_prefix_list[i]+" "+genome_index_path+" "+read1_list[i]+" "+read2_list[i]+" "+project_name
         job = os.popen(command).read().splitlines()
-        print(job)
-        jobid.append(job[0].split(' ')[2])
+        print(job[1])
+        jobid.append(job[1].split(' ')[2])
     
     return jobid
 
@@ -681,8 +681,8 @@ def featurecounts_RunQuantification(scriptpath_featurecounts,GTF,bam_list,count_
     for i in range(len(bam_list)):
         command = "source "+scriptpath_featurecounts+" "+bam_list[i]+" "+GTF+" "+feature+" "+count_prefix_list[i]+" "+strandBED+" "+project_name
         job = os.popen(command).read().splitlines()
-        print(job)
-        jobid.append(job[0].split(' ')[2])
+        print(job[1])
+        jobid.append(job[1].split(' ')[2])
     
     return jobid
 
@@ -770,8 +770,8 @@ def rsem_RunQuantification(scriptpath_rsem,rsem_index,bam_list,count_prefix_list
     for i in range(len(bam_list)):
         command = "source "+scriptpath_rsem+" "+bam_list[i]+" "+rsem_index+" "+feature+" "+count_prefix_list[i]+" "+strandBED+" "+bamTranscript_list[i]+" "+project_name
         job = os.popen(command).read().splitlines()
-        print(job)
-        jobid.append(job[0].split(' ')[2])
+        print(job[1])
+        jobid.append(job[1].split(' ')[2])
     
     return jobid
     
@@ -885,8 +885,8 @@ def deseq2_RunDE(scriptpath_deseq2,Rpath_deseq2,inpath_counts,inpath_design,outp
     jobid = []
     command = "source "+scriptpath_deseq2+" "+Rpath_deseq2+" "+inpath_counts+"/count_matrix.txt"+" "+inpath_design+"/design_matrix.txt"+" "+outpath+" "+refcond+" "+compared+" "+redundant+" "+project_name
     job = os.popen(command).read().splitlines()
-    print(job)
-    jobid.append(job[0].split(' ')[2])
+    print(job[1])
+    jobid.append(job[1].split(' ')[2])
 
     return jobid
 
