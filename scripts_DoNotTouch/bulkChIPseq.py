@@ -223,8 +223,8 @@ def filetransfer_Copy(read_path_original,scriptpath_copy):
 
     command = "source "+scriptpath_copy+" "+read_path_original+" "+"../../csl_results/"+project_name+"/data/fastq"+" "+project_name
     job = os.popen(command).read().splitlines()
-    print(job)
-    jobid.append(job[0].split(' ')[2])
+    print(job[1])
+    jobid.append(job[1].split(' ')[2])
     
     return jobid
 
@@ -323,9 +323,9 @@ def fastqc_RunQC(readlist,outdir_fastqc,read_path_destination,scriptpath_fastqc)
     for file in readlist:
         command = "source "+scriptpath_fastqc+" "+read_path_destination+file+" "+outdir_fastqc+"/."+" "+project_name 
         job = os.popen(command).read().splitlines()
-        print(job)
+        print(job[1])
         
-        jobid.append(job[0].split(' ')[2])
+        jobid.append(job[1].split(' ')[2])
     
     return jobid
 
@@ -423,9 +423,9 @@ def cutadapt_RunTrimming(adapter,adapter2,minlen,read1_list,read2_list,trimmed1_
     for i in range(len(read1_list)):
         command = "source "+scriptpath_cutadapt+" "+minlen+" "+adapter+" "+adapter2+" "+trimmed1_list[i]+" "+trimmed2_list[i]+" "+read1_list[i]+" "+read2_list[i]+" "+project_name 
         job = os.popen(command).read().splitlines()
-        print(job)
+        print(job[1])
         
-        jobid.append(job[0].split(' ')[2])
+        jobid.append(job[1].split(' ')[2])
     
     return jobid
 
@@ -502,8 +502,8 @@ def bowtie2_RunAlignment(genome_index_path,read1_list,read2_list,out_prefix_list
         command = "source "+scriptpath_bowtie2+" "+out_prefix_list[i]+" "+genome_index_path+" "+read1_list[i]+" "+read2_list[i]+" "+effgenomesize+" "+chromsize+" "+project_name
         job = os.popen(command).read().strip().splitlines()
         #job = os.popen(command).read().splitlines()
-        print(job)
-        jobid.append(job[0].split(' ')[2])
+        print(job[1])
+        jobid.append(job[1].split(' ')[2])
     
     return jobid
 
@@ -651,8 +651,8 @@ def macs2_RunPeakCalling(scriptpath_macs2,genomesize,chromsize,bed_list,macs2_pr
         command = "source "+scriptpath_macs2+" "+prefix[i]+" "+chip_bed_list[i]+" "+genomesize+" "+chromsize+" "+macs2_prefix_list[i]+" "+anno_onlyChrNoMito+" "+project_name+" "+input_bed_list[i]
         job = os.popen(command).read().strip().splitlines()
         #job = os.popen(command).read().splitlines()
-        print(job)
-        jobid.append(job[0].split(' ')[2])
+        print(job[1])
+        jobid.append(job[1].split(' ')[2])
     
     return jobid
 
@@ -771,8 +771,8 @@ def homer_RunAnnoTag(genome_homer,out_prefix_bowtie2_list,out_prefix_anno_list,o
         command = "source "+scriptpath_homer_annotag+" "+out_prefix_bowtie2_list[i]+" "+out_prefix_tag_list[i]+" "+out_prefix_anno_list[i]+" "+genome_homer+" "+project_name
         job = os.popen(command).read().strip().splitlines()
         #job = os.popen(command).read().splitlines()
-        print(job)
-        jobid.append(job[0].split(' ')[2])
+        print(job[1])
+        jobid.append(job[1].split(' ')[2])
     
     return jobid
 
@@ -784,8 +784,8 @@ def homer_RunDiffPeak(genome_homer,out_dir_tag,scriptpath_homer_diffpeak,refcond
     command = "source "+scriptpath_homer_diffpeak+" "+out_dir_tag+" "+refcond_list+" "+compared_list+" "+genome_homer+" "+refcond+" "+compared+" "+project_name
     job = os.popen(command).read().strip().splitlines()
     #job = os.popen(command).read().splitlines()
-    print(job)
-    jobid.append(job[0].split(' ')[2])
+    print(job[1])
+    jobid.append(job[1].split(' ')[2])
     
     return jobid
     
@@ -842,8 +842,8 @@ def visualization_MakeTracks(genome_index_path,scriptpath_tracks,tracks_dir,macs
     command = "source "+scriptpath_tracks+" "+genome_index_path+" "+peak_list+" "+tracks_dir+" "+region+" "+project_name
     job = os.popen(command).read().strip().splitlines()
     #job = os.popen(command).read().splitlines()
-    print(job)
-    jobid.append(job[0].split(' ')[2])
+    print(job[1])
+    jobid.append(job[1].split(' ')[2])
     
     return jobid
 
