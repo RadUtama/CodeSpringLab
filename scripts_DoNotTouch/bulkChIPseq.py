@@ -500,8 +500,8 @@ def bowtie2_RunAlignment(genome_index_path,read1_list,read2_list,out_prefix_list
     jobid = []
     for i in range(len(out_prefix_list)):
         command = "source "+scriptpath_bowtie2+" "+out_prefix_list[i]+" "+genome_index_path+" "+read1_list[i]+" "+read2_list[i]+" "+effgenomesize+" "+chromsize+" "+project_name
-        job = os.popen(command).read().strip().splitlines()
-        #job = os.popen(command).read().splitlines()
+        #job = os.popen(command).read().strip().splitlines()
+        job = os.popen(command).read().splitlines()
         print(job[1])
         jobid.append(job[1].split(' ')[2])
     
@@ -649,8 +649,8 @@ def macs2_RunPeakCalling(scriptpath_macs2,genomesize,chromsize,bed_list,macs2_pr
     jobid = []
     for i in range(len(chip_bed_list)):
         command = "source "+scriptpath_macs2+" "+prefix[i]+" "+chip_bed_list[i]+" "+genomesize+" "+chromsize+" "+macs2_prefix_list[i]+" "+anno_onlyChrNoMito+" "+project_name+" "+input_bed_list[i]
-        job = os.popen(command).read().strip().splitlines()
-        #job = os.popen(command).read().splitlines()
+        #job = os.popen(command).read().strip().splitlines()
+        job = os.popen(command).read().splitlines()
         print(job[1])
         jobid.append(job[1].split(' ')[2])
     
@@ -769,8 +769,8 @@ def homer_RunAnnoTag(genome_homer,out_prefix_bowtie2_list,out_prefix_anno_list,o
     jobid = []
     for i in range(len(bed_list)):
         command = "source "+scriptpath_homer_annotag+" "+out_prefix_bowtie2_list[i]+" "+out_prefix_tag_list[i]+" "+out_prefix_anno_list[i]+" "+genome_homer+" "+project_name
-        job = os.popen(command).read().strip().splitlines()
-        #job = os.popen(command).read().splitlines()
+        #job = os.popen(command).read().strip().splitlines()
+        job = os.popen(command).read().splitlines()
         print(job[1])
         jobid.append(job[1].split(' ')[2])
     
@@ -782,8 +782,8 @@ def homer_RunDiffPeak(genome_homer,out_dir_tag,scriptpath_homer_diffpeak,refcond
     
     jobid = []
     command = "source "+scriptpath_homer_diffpeak+" "+out_dir_tag+" "+refcond_list+" "+compared_list+" "+genome_homer+" "+refcond+" "+compared+" "+project_name
-    job = os.popen(command).read().strip().splitlines()
-    #job = os.popen(command).read().splitlines()
+    #job = os.popen(command).read().strip().splitlines()
+    job = os.popen(command).read().splitlines()
     print(job[1])
     jobid.append(job[1].split(' ')[2])
     
@@ -840,8 +840,8 @@ def visualization_MakeTracks(genome_index_path,scriptpath_tracks,tracks_dir,macs
     
     jobid = []
     command = "source "+scriptpath_tracks+" "+genome_index_path+" "+peak_list+" "+tracks_dir+" "+region+" "+project_name
-    job = os.popen(command).read().strip().splitlines()
-    #job = os.popen(command).read().splitlines()
+    #job = os.popen(command).read().strip().splitlines()
+    job = os.popen(command).read().splitlines()
     print(job[1])
     jobid.append(job[1].split(' ')[2])
     
