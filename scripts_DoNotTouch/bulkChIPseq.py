@@ -522,7 +522,7 @@ def bowtie2_ListDir(directory):
         
         logfile = directory+file+"/"+file+"Log.final.out"
 
-        log_df = pd.read_csv(logfile,skiprows=19,nrows=6)
+        log_df = pd.read_csv(logfile,skiprows=27,nrows=6)
         log_raw = log_df.rename({log_df.columns[0]:file},axis='columns')
         
         if i == 1 :
