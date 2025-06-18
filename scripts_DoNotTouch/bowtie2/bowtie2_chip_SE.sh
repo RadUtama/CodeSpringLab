@@ -16,6 +16,8 @@ rm ${1}_temp1.sam
 samtools sort -n -o ${1}_temp3.sam ${1}_temp2.sam
 rm ${1}_temp2.sam
 
+samtools idxstats ${1}_temp3.sam > ${1}_chr_counts.txt
+
 awk '( ($3 ~ /^chr/ && $3 != "chrM" && $3 != "chrUn") || (/^@/) )' ${1}_temp3.sam > ${1}Aligned.sortedByName.out.sam
 rm ${1}_temp3.sam
 
