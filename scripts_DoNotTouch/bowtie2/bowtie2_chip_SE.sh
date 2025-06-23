@@ -13,6 +13,10 @@ bowtie2  --very-sensitive --dovetail --threads 8 \
 samtools view -h -q 30 -o ${1}_temp2.sam ${1}_temp1.sam
 rm ${1}_temp1.sam
 
+samtools sort -o ${1}_temp2.sortedByCoord.sam ${1}_temp2.sam
+samtools idxstats ${1}_temp2.sortedByCoord.sam > ${1}_chr_counts.txt
+rm ${1}_temp2.sortedByCoord.sam
+
 samtools sort -n -o ${1}_temp3.sam ${1}_temp2.sam
 rm ${1}_temp2.sam
 
