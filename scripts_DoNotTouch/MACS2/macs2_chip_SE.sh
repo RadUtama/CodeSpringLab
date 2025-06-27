@@ -24,7 +24,7 @@ computeMatrix reference-point -p 4 \
     --referencePoint TSS \
     -b 1000 -a 1000 \
     -R ${6} \
-    -S ${5}/${1}Aligned.sortedByCoord_removeDup.out.bw \
+    -S ${9}/${1}/${1}Aligned.sortedByCoord_removeDup.out.bw \
     --skipZeros \
     -o ${5}/${1}_TSS.gz \
     --outFileSortedRegions ${5}/${1}_genes_TSS.bed
