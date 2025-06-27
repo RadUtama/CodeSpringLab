@@ -552,10 +552,12 @@ def macs2_Prep(genome,out_dir,pairing,inpath_design):
         os.makedirs(macs2_dir+prefix[i],exist_ok=True)
     
     if genome == 'mouse':
+        homerspecies = "mm39"
         genomesize = "1.87e+9"
         chromsize = "/grid/bsr/data/data/utama/genome/GRCm39_M29_gencode/chrom.sizes"
         anno_onlyChrNoMito = "/grid/bsr/data/data/utama/genome/GRCm39_M29_gencode/gencode.vM29.annotation_onlyChrNoMito.bed"
     elif genome == 'human':
+        homerspecies = "hg38"
         genomesize = "2.7e+9"
         chromsize = "/grid/bsr/data/data/utama/genome/hg38_p13_gencode/chrom.sizes"
         anno_onlyChrNoMito = "/grid/bsr/data/data/utama/genome/hg38_p13_gencode/gencode.v42.chr_patch_hapl_scaff.annotation_onlyChrNoMito.bed"
@@ -576,7 +578,7 @@ def macs2_Prep(genome,out_dir,pairing,inpath_design):
     
     macs2_prefix_list = macs2_dir+prefix+'/'
 
-    return scriptpath_macs2,genomesize,chromsize,bed_list,macs2_prefix_list,prefix,anno_onlyChrNoMito,macs2_dir
+    return scriptpath_macs2,genomesize,chromsize,bed_list,macs2_prefix_list,prefix,anno_onlyChrNoMito,macs2_dir,homerspecies
 
 def macs2_PrepDirect():
     
@@ -598,7 +600,7 @@ def macs2_PrepDirect():
     
     return genome,pairing,out_dir+"/",inpath_design+"/"
 
-def macs2_RunPeakCalling(scriptpath_macs2,genomesize,chromsize,bed_list,macs2_prefix_list,prefix,anno_onlyChrNoMito,inpath_design):
+def macs2_RunPeakCalling(scriptpath_macs2,genomesize,chromsize,bed_list,macs2_prefix_list,prefix,anno_onlyChrNoMito,inpath_design,homerspecies,out_dir):
      
     global project_name
     
@@ -648,7 +650,7 @@ def macs2_RunPeakCalling(scriptpath_macs2,genomesize,chromsize,bed_list,macs2_pr
     
     jobid = []
     for i in range(len(chip_bed_list)):
-        command = "source "+scriptpath_macs2+" "+prefix[i]+" "+chip_bed_list[i]+" "+genomesize+" "+chromsize+" "+macs2_prefix_list[i]+" "+anno_onlyChrNoMito+" "+project_name+" "+input_bed_list[i]
+        command = "source "+scriptpath_macs2+" "+prefix[i]+" "+chip_bed_list[i]+" "+genomesize+" "+chromsize+" "+macs2_prefix_list[i]+" "+anno_onlyChrNoMito+" "+project_name+" "+input_bed_list[i]+" "+homerspecies+" "+out_dir
         #job = os.popen(command).read().strip().splitlines()
         job = os.popen(command).read().splitlines()
         print(job[1])
@@ -671,7 +673,8 @@ def macs2_PeakList():
     
     file = dirlist.loc[index_files,0]
     
-    peaklist = pd.read_table(outpath+"/"+file+"/"+file+"_peaks.xls",header=0,index_col=0,comment='#',engine='python')
+    #peaklist = pd.read_table(outpath+"/"+file+"/"+file+"_peaks.xls",header=0,index_col=0,comment='#',engine='python')
+    peaklist = pd.read_table(outpath+"/"+file+"/"+file+"_peaks_annotated.txt",header=0,index_col=0,comment='#',engine='python')
     
     return peaklist
 
