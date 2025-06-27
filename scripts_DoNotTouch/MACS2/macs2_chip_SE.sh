@@ -46,3 +46,13 @@ plotHeatmap -m ${5}/${1}_TSS.gz \
 #    -out ${5}/${1}_heatmap_peakCenter.png \
 
 #conda deactivate
+
+###### Homer Annotate #########
+
+module load EBModules
+module load Anaconda3/2021.05
+module load R/4.1.2-foss-2021a
+
+export PATH=$PATH:/grid/bsr/data/data/utama/tools/homer/bin/
+
+annotatePeaks.pl ${5}/${1}_peaks.xls ${8} > ${5}/${1}_peaks_annotated.txt
