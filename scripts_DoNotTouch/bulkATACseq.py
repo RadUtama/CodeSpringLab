@@ -4,7 +4,7 @@ import pandas as pd
 import os
 import time
 import re
-from IPython.display import IFrame,clear_output
+from IPython.display import IFrame,clear_output,HTML
 import shutil
 import seaborn as sns
 import matplotlib.pyplot as plt
