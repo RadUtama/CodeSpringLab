@@ -336,7 +336,8 @@ def fastqc_ListDir(outdir_fastqc):
     dirlist.index = range(len(dirlist))
     
     DataFrame(dirlist).to_html(outdir_fastqc+'/QC_list.html')
-    dir_html = IFrame(outdir_fastqc+'/QC_list.html', width=1000, height=800)
+    #dir_html = IFrame(outdir_fastqc+'/QC_list.html', width=1000, height=800)
+    dir_html = HTML(open(outdir_fastqc+'/QC_list.html').read())
     
     return dir_html
 
@@ -351,7 +352,8 @@ def fastqc_Visualization(outdir_fastqc):
     index_files = int(input())    
     
     file = dirlist[index_files]
-    qc = IFrame(outdir_fastqc+file, width=1000, height=800)
+    #qc = IFrame(outdir_fastqc+file, width=1000, height=800)
+    qc = HTML(open(outdir_fastqc+file).read())
     
     return qc
 
@@ -546,7 +548,8 @@ def bowtie2_Visualization(out_dir):
     index_files = int(input())    
     
     file = dirlist.loc[index_files,0]
-    qc = IFrame(out_dir+"/"+file+"/"+file+"_insert_size_histogram.jpg", width=1000, height=800)
+    #qc = IFrame(out_dir+"/"+file+"/"+file+"_insert_size_histogram.jpg", width=1000, height=800)
+    qc = HTML(open(out_dir+"/"+file+"/"+file+"_insert_size_histogram.jpg").read())
     
     return qc
 
@@ -822,7 +825,8 @@ def visualization_MakeTracks(genome_index_path,scriptpath_tracks,tracks_dir,macs
 
 def visualization_PlotTracks(tracks_dir):
 
-    trackplot = IFrame(tracks_dir+"/"+"genomeTracks.png", width=800, height=800)
+    #trackplot = IFrame(tracks_dir+"/"+"genomeTracks.png", width=800, height=800)
+    trackplot = HTML(open(tracks_dir+"/"+"genomeTracks.png").read())
     
     return trackplot
 
@@ -838,7 +842,8 @@ def visualization_PlotHeatmap(out_peak):
     
     file = dirlist.loc[index_files,0]
     
-    heatplot = IFrame(out_peak+"/"+file+"/"+file+"_heatmap_TSS.png", width=800, height=800)
+    #heatplot = IFrame(out_peak+"/"+file+"/"+file+"_heatmap_TSS.png", width=800, height=800)
+    heatplot = HTML(open(out_peak+"/"+file+"/"+file+"_heatmap_TSS.png").read())
     
     return heatplot
     
