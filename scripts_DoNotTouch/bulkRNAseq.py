@@ -337,7 +337,8 @@ def fastqc_ListDir(outdir_fastqc):
     dirlist.index = range(len(dirlist))
     
     DataFrame(dirlist).to_html(outdir_fastqc+'/QC_list.html')
-    dir_html = IFrame(outdir_fastqc+'/QC_list.html', width=1000, height=800)
+    #dir_html = IFrame(outdir_fastqc+'/QC_list.html', width=1000, height=800)
+    dir_html = HTML(open(outdir_fastqc+'/QC_list.html').read())
     
     return dir_html
 
@@ -352,7 +353,8 @@ def fastqc_Visualization(outdir_fastqc):
     index_files = int(input())    
     
     file = dirlist[index_files]
-    qc = IFrame(outdir_fastqc+file, width=1000, height=800)
+    #qc = IFrame(outdir_fastqc+file, width=1000, height=800)
+    qc = HTML(open(outdir_fastqc+file).read())
     
     return qc
 
