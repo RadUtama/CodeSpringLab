@@ -940,7 +940,9 @@ def gseapy_PrepDirect():
     compared = input()
 
     print("========================================")
-    print("Specify gene set database:(e.g MSigDB_Hallmark_2020, KEGG_2021_Human, GO_Biological_Process_2018)")
+    print("Specify gene set database:(e.g MSigDB_Hallmark_2020, KEGG_2021_Human, GO_Biological_Process_2025, Reactome_Pathways_2024, ARCHS4_TFs_Coexp, ENCODE_TF_ChIP-seq_2015")
+    print(", ENCODE_Histone_Modifications_2015, FANTOM6_lncRNA_KD_DEGs, miRTarBase_2017, TRANSFAC_and_JASPAR_PWMs, GTEx_Tissues_V8_2023, CellMarker_2024, Cancer_Cell_Line_Encyclopedia")
+    print(", ClinVar_2019, GTEx_Aging_Signatures_2021, Proteomics_Drug_Atlas_2023")
     geneset = input()
     
     return geneset,genome,feature,inpath_design+"/",outpath+"/",outpath_pathway,refcond,compared
@@ -1006,7 +1008,7 @@ def gseapy_RunPathway(geneset,genome,feature,inpath_design,outpath,outpath_pathw
 
     pathways = pd.read_csv(outpath_pathway+'/gseapy.gene_set.gsea.report.csv',index_col=None)
     pathways = pathways.sort_values(by=['FDR q-val'])
-    pathways.to_csv(outpath_pathway+'/gseapy.gene_set.gsea.report.csv',index=None)
+    pathways.to_csv(outpath_pathway+'/report.gseapy.'+geneset+'.csv',index=None)
     terms = pathways.Term
 
     return gs,gs_res,pathways,terms,project_name
