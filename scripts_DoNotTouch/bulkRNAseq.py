@@ -901,7 +901,12 @@ def gseapy_Prep():
     print("GSEApy results are stored in ../../csl_results/"+project_name+"/data/gseapy/")
 
     print("========================================")
-    print("Specify gene set database:(e.g MSigDB_Hallmark_2020, KEGG_2021_Human, GO_Biological_Process_2018)")
+    print("Specify gene set database:")
+    print("MSigDB_Hallmark_2020, KEGG_2021_Human, GO_Biological_Process_2025, Reactome_Pathways_2024")
+    print("ARCHS4_TFs_Coexp, ENCODE_TF_ChIP-seq_2015, ENCODE_Histone_Modifications_2015")
+    print("FANTOM6_lncRNA_KD_DEGs, miRTarBase_2017, TRANSFAC_and_JASPAR_PWMs")
+    print("GTEx_Tissues_V8_2023, CellMarker_2024, Cancer_Cell_Line_Encyclopedia")
+    print("ClinVar_2019, GTEx_Aging_Signatures_2021, Proteomics_Drug_Atlas_2023")
     geneset = input()
     
     return geneset,outpath_pathway
@@ -940,9 +945,12 @@ def gseapy_PrepDirect():
     compared = input()
 
     print("========================================")
-    print("Specify gene set database:(e.g MSigDB_Hallmark_2020, KEGG_2021_Human, GO_Biological_Process_2025, Reactome_Pathways_2024, ARCHS4_TFs_Coexp, ENCODE_TF_ChIP-seq_2015")
-    print(", ENCODE_Histone_Modifications_2015, FANTOM6_lncRNA_KD_DEGs, miRTarBase_2017, TRANSFAC_and_JASPAR_PWMs, GTEx_Tissues_V8_2023, CellMarker_2024, Cancer_Cell_Line_Encyclopedia")
-    print(", ClinVar_2019, GTEx_Aging_Signatures_2021, Proteomics_Drug_Atlas_2023")
+    print("Specify gene set database:")
+    print("MSigDB_Hallmark_2020, KEGG_2021_Human, GO_Biological_Process_2025, Reactome_Pathways_2024")
+    print("ARCHS4_TFs_Coexp, ENCODE_TF_ChIP-seq_2015, ENCODE_Histone_Modifications_2015")
+    print("FANTOM6_lncRNA_KD_DEGs, miRTarBase_2017, TRANSFAC_and_JASPAR_PWMs")
+    print("GTEx_Tissues_V8_2023, CellMarker_2024, Cancer_Cell_Line_Encyclopedia")
+    print("ClinVar_2019, GTEx_Aging_Signatures_2021, Proteomics_Drug_Atlas_2023")
     geneset = input()
     
     return geneset,genome,feature,inpath_design+"/",outpath+"/",outpath_pathway,refcond,compared
