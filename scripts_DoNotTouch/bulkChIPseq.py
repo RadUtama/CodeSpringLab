@@ -4,7 +4,7 @@ import pandas as pd
 import os
 import time
 import re
-from IPython.display import IFrame,clear_output,HTML
+from IPython.display import IFrame,clear_output,HTML,Image
 import shutil
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -855,7 +855,8 @@ def visualization_MakeTracks(genome_index_path,scriptpath_tracks,tracks_dir,macs
 def visualization_PlotTracks(tracks_dir):
 
     #trackplot = IFrame(tracks_dir+"/"+"genomeTracks.png", width=800, height=800)
-    trackplot = HTML(open(tracks_dir+"/"+"genomeTracks.png").read())
+    #trackplot = HTML(open(tracks_dir+"/"+"genomeTracks.png").read())
+    trackplot = Image(tracks_dir+"/"+"genomeTracks.png")
     
     return trackplot
 
@@ -872,7 +873,8 @@ def visualization_PlotHeatmap(out_peak):
     file = dirlist.loc[index_files,0]
     
     #heatplot = IFrame(out_peak+"/"+file+"/"+file+"_heatmap_TSS.png", width=800, height=800)
-    heatplot = HTML(open(out_peak+"/"+file+"/"+file+"_heatmap_TSS.png").read())
+    #heatplot = HTML(open(out_peak+"/"+file+"/"+file+"_heatmap_TSS.png").read())
+    heatplot = Image(out_peak+"/"+file+"/"+file+"_heatmap_TSS.png")
     
     return heatplot
     
