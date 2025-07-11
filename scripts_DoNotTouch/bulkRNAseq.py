@@ -4,7 +4,7 @@ import pandas as pd
 import os
 import time
 import re
-from IPython.display import IFrame,clear_output,HTML
+from IPython.display import IFrame,clear_output,HTML,Image
 import shutil
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -343,6 +343,7 @@ def fastqc_ListDir(outdir_fastqc):
     #dir_html = IFrame(outdir_fastqc+'/QC_list.html', width=1000, height=800)
     #dir_html = HTML(open(outdir_fastqc+'/QC_list.html').read())
     dir_html = Image(outdir_fastqc+'/QC_list.png')
+    os.remove(outdir_fastqc+'/QC_list.png')
     
     return dir_html
 
@@ -357,11 +358,17 @@ def fastqc_Visualization(outdir_fastqc):
     index_files = int(input())    
     
     file = dirlist[index_files]
-    imgkit.from_file(outdir_fastqc+file, outdir_fastqc+file+'.png')
+    options = {
+    'format': 'png',
+    'width': 1500,  # adjust as needed
+    'height': 8000  # large enough to capture full content
+    }
+    imgkit.from_file(outdir_fastqc+file, outdir_fastqc+file+'.png',options=options)
     
     #qc = IFrame(outdir_fastqc+file, width=1000, height=800)
     #qc = HTML(open(outdir_fastqc+file).read())
     qc = Image(outdir_fastqc+file+'.png')
+    os.remove(outdir_fastqc+file+'.png')
     
     return qc
 
