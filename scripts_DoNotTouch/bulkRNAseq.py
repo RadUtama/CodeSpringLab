@@ -1035,9 +1035,16 @@ def gseapy_RunPathway(geneset,genome,feature,inpath_design,outpath,outpath_pathw
 
     return gs,gs_res,pathways,terms,project_name
 
-def gseapy_DotPlot(pathways,geneset):
+def gseapy_DotPlot(outpath_pathway,pathways,geneset):
     
     # to save your figure, make sure that ``ofname`` is not None
+    dot = dotplot(pathways,
+             column="FDR q-val",
+             title=geneset,
+             cmap=plt.cm.YlOrRd,
+             size=8,
+             ofname=outpath_pathway+"DotPlot_Top10."+geneset+'.png',
+             figsize=(4,5), cutoff=1)
     dot = dotplot(pathways,
              column="FDR q-val",
              title=geneset,
