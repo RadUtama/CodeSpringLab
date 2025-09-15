@@ -666,41 +666,16 @@ def macs2_PeakList():
     
     return peaklist
 
-def homer_PrepDirect():
-    
-    print("========================================")
-    print("Specify genome:(e.g human, mouse, etc)")
-    genome = input()
-    print("========================================")
-    print("Specify the path to alignment folder used for peak calling:")
-    out_dir = input()
-    out_dir = os.path.expanduser(out_dir)
-    print("========================================")
-    print("Specify the path to folder containing design_matrix.txt used for DE:")
-    inpath_design = input()
-    inpath_design = os.path.expanduser(inpath_design)
-    print("========================================")
-    
-    return genome,out_dir+"/",inpath_design
+def diffbind_Prep(inpath_design):
 
-def homer_Prep(genome,out_dir,inpath_design):
-        
     global project_name
-    if os.path.exists("../../csl_results/"+project_name+"/log/output_homer_annotag.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_homer_annotag.txt"):
-        os.remove("../../csl_results/"+project_name+"/log/output_homer_annotag.txt")
-        os.remove("../../csl_results/"+project_name+"/log/error_homer_annotag.txt")
-    if os.path.exists("../../csl_results/"+project_name+"/log/output_homer_diffpeak.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_homer_diffpeak.txt"):
-        os.remove("../../csl_results/"+project_name+"/log/output_homer_diffpeak.txt")
-        os.remove("../../csl_results/"+project_name+"/log/error_homer_diffpeak.txt")
-    
-    if genome == 'mouse':
-        genome_homer = "mm10"
-    elif genome == 'human':
-        genome_homer = "hg38"
-    
+    outpath = "../../csl_results/"+project_name+"/data/diffbind/"
+    os.makedirs(outpath,exist_ok=True)
+    print("DiffBind results are stored in ../../csl_results/"+project_name+"/data/diffbind/")
+
     design = pd.read_table(inpath_design+'/design_matrix.txt',index_col=0)
     design = design.iloc[:,:len(design.columns)-1]
-    
+
     print("========================================")
     print("Here's the list of phenotypes/conditions/experiments")
     design_var=[]
@@ -708,77 +683,131 @@ def homer_Prep(genome,out_dir,inpath_design):
         design_var.append(design.columns[i])
         print(design.columns[i]+':')
         print(set(design.iloc[:,i]))
-    
+
     print("========================================")
-    print("Which phenotype/condition/replicate/batch should be the reference/baseline?(e.g control)")
+    print("Which phenotype/condition/replicate/batch should be the reference/baseline?(e.g day1)")
     refcond = input()
-    
+
     print("========================================")
-    print("Which phenotype/condition/replicate/batch to compare?(e.g treated)")
+    print("Which phenotype/condition/replicate/batch to compare?(e.g day3)")
     compared = input()
-    
-    refcond_full = design[design.isin(['refcond']).any(axis=1)].index
-    refcond_list = ""
-    for i in range(len(refcond_full)):
-        if i == 0:
-            refcond_list += refcond_full[i]
-        else:
-            refcond_list += " "+refcond_full[i]
-        
-    compared_full = design[design.isin(['compared']).any(axis=1)].index
-    compared_list = ""
-    for i in range(len(compared_full)):
-        if i == 0:
-            compared_list += compared_full[i]
-        else:
-            compared_list += " "+compared_full[i]
-    
-    prefix = pd.Series(os.listdir(out_dir))
-    
-    out_dir_anno = "../../csl_results/"+project_name+"/data/MACS2/"
-    out_dir_tag = "../../csl_results/"+project_name+"/data/homer/"
-   
-    for i in range(len(prefix)):
-        os.makedirs(out_dir_tag+'/'+prefix[i],exist_ok=True)
+
+    scriptpath_diffbind = '../scripts_DoNotTouch/DiffBind/qsub_diffbind.sh'
+    Rpath_diffbind = '../scripts_DoNotTouch/DiffBind/DiffBind.R'
+
+    return scriptpath_diffbind,Rpath_diffbind,outpath,refcond,compared
+
+def diffbind_PrepDirect():
 
     print("========================================")
-    print("Homer tag results will be stored in ../../csl_results/"+project_name+"/data/homer/")
-    
-    out_prefix_bowtie2_list = out_dir+'/'+prefix+'/'+prefix
-    out_prefix_anno_list = out_dir_anno+'/'+prefix+'/'+prefix
-    out_prefix_tag_list = out_dir_tag+'/'+prefix+'/'
-    
-    scriptpath_homer_annotag = '../scripts_DoNotTouch/Homer/qsub_homer_annotag.sh'
-    scriptpath_homer_diffpeak = '../scripts_DoNotTouch/Homer/qsub_homer_diffpeak.sh'
+    print("Specify genome:(e.g human, mouse, etc)")
+    genome = input()
+    print("========================================")
+    print("Specify the path to alignment folder used for Differential Peaks:")
+    out_dir = input()
+    out_dir = os.path.expanduser(out_dir)
+    print("========================================")
+    print("Specify the path to folder containing .narrowPeak used for Differential Peaks:")
+    outpath_peak = input()
+    outpath_peak = os.path.expanduser(outpath_peak)
+    print("========================================")
+    print("Specify the path to folder containing design_matrix.txt used for Differential Peaks:")
+    inpath_design = input()
+    inpath_design = os.path.expanduser(inpath_design)
+    print("========================================")
 
-    return genome_homer,out_dir_tag,out_prefix_bowtie2_list,out_prefix_anno_list,out_prefix_tag_list,prefix,scriptpath_homer_annotag,scriptpath_homer_diffpeak,refcond,compared,refcond_list,compared_list
+    return genome,out_dir+"/",outpath_peak+"/",inpath_design+"/"
 
-def homer_RunAnnoTag(genome_homer,out_prefix_bowtie2_list,out_prefix_anno_list,out_prefix_tag_list,scriptpath_homer_annotag):
-     
+def diffbind_RunDiffPeak(scriptpath_diffbind,Rpath_diffbind,outpath_peak,inpath_design,outpath,refcond,compared,genome,out_dir):
+
     global project_name
+
+    bamdir_example = "../../csl_results/example_dataset/data/bowtie2/"
+    peakdir_example = "../../csl_results/example_dataset/data/macs2/"
+    bamsuffix = "Aligned.sortedByCoord_removeDup.out.bam"
+    peaksuffix = "_peaks.narrowPeak"
+    
+    day1_rep2_bam = bamdir_example+"/CD4_day1_rep2/"
+    day3_rep2_bam = bamdir_example+"/CD4_day3_rep2/"
+    day1_rep2_peak = peakdir_example+"/CD4_day1_rep2/"
+    day3_rep2_peak = peakdir_example+"/CD4_day3_rep2/"
+    
+    day1_rep3_bam = bamdir_example+"/CD4_day1_rep3/"
+    day3_rep3_bam = bamdir_example+"/CD4_day3_rep3/"
+    day1_rep3_peak = peakdir_example+"/CD4_day1_rep3/"
+    day3_rep3_peak = peakdir_example+"/CD4_day3_rep3/"
+    
+    os.makedirs(day1_rep3_bam,exist_ok=True)
+    os.makedirs(day3_rep3_bam,exist_ok=True)
+    os.makedirs(day1_rep3_peak,exist_ok=True)
+    os.makedirs(day3_rep3_peak,exist_ok=True)
+
+    shutil.copy(day1_rep2_bam+"/CD4_day1_rep2"+bamsuffix,day1_rep3_bam+"/CD4_day1_rep3"+bamsuffix)
+    shutil.copy(day3_rep2_bam+"/CD4_day3_rep2"+bamsuffix,day3_rep3_bam+"/CD4_day3_rep3"+bamsuffix)
+    shutil.copy(day1_rep2_peak+"/CD4_day1_rep2"+peaksuffix,day1_rep3_peak+"/CD4_day1_rep3"+peaksuffix)
+    shutil.copy(day3_rep2_peak+"/CD4_day3_rep2"+peaksuffix,day3_rep3_peak+"/CD4_day3_rep3"+peaksuffix)
     
     jobid = []
-    for i in range(len(bed_list)):
-        command = "source "+scriptpath_homer_annotag+" "+out_prefix_bowtie2_list[i]+" "+out_prefix_tag_list[i]+" "+out_prefix_anno_list[i]+" "+genome_homer+" "+project_name
-        #job = os.popen(command).read().strip().splitlines()
-        job = os.popen(command).read().splitlines()
-        print(job[1])
-        jobid.append(job[1].split(' ')[2])
-    
-    return jobid
-
-def homer_RunDiffPeak(genome_homer,out_dir_tag,scriptpath_homer_diffpeak,refcond,compared,refcond_list,compared_list):
-     
-    global project_name
-    
-    jobid = []
-    command = "source "+scriptpath_homer_diffpeak+" "+out_dir_tag+" "+refcond_list+" "+compared_list+" "+genome_homer+" "+refcond+" "+compared+" "+project_name
-    #job = os.popen(command).read().strip().splitlines()
+    command = "source "+scriptpath_diffbind+" "+Rpath_diffbind+" "+outpath+" "+inpath_design+" "+outpath_peak+" "+refcond+" "+compared+" "+genome+" "+out_dir+" "+project_name
     job = os.popen(command).read().splitlines()
     print(job[1])
     jobid.append(job[1].split(' ')[2])
-    
+
     return jobid
+
+def diffbind_PlotCorrHeatByCounts(outpath):
+
+    corrheatbycounts = Image(outpath+"/diffbind_CorrHeatmap_byCounts.png")
+    
+    return corrheatbycounts
+
+def diffbind_PlotCorrHeatByPeaks(outpath):
+
+    corrheatbypeaks = Image(outpath+"/diffbind_CorrHeatmap_byPeaks.png")
+    
+    return corrheatbypeaks
+
+def diffbind_PlotSampleHeatByDiffPeaks(outpath):
+
+    sampleheatbydiffpeaks = Image(outpath+"/diffbind_SampleHeatmap_byDiffPeaks.png")
+    
+    return sampleheatbydiffpeaks
+
+def diffbind_PlotPCAByNormCounts(outpath):
+
+    pcabynormcounts = Image(outpath+"/diffbind_pca_byNormCounts.png")
+    
+    return pcabynormcounts
+
+def diffbind_PlotPCAByDiffPeaks(outpath):
+
+    pcabydiffpeaks = Image(outpath+"/diffbind_pca_byDiffPeaks.png")
+    
+    return pcabydiffpeaks
+
+def diffbind_VolcanoByDiffPeaks(outpath):
+
+    volcanobydiffpeaks = Image(outpath+"/diffbind_volcano_byDiffPeaks.png")
+    
+    return volcanobydiffpeaks
+
+def diffbind_PlotBoxByDiffPeaks(outpath):
+
+    boxbydiffpeaks = Image(outpath+"/diffbind_boxplot_byDiffPeaks.png")
+    
+    return boxbydiffpeaks
+
+def diffbind_PlotProfileHeatBySampleContrast(outpath):
+
+    profheatbysamplecontrast = Image(outpath+"/diffbind_ProfileHeatmap_bySampleContrast.png")
+    
+    return profheatbysamplecontrast
+
+def diffbind_PlotProfileHeatByMergedContrast(outpath):
+
+    profheatbymergedcontrast = Image(outpath+"/diffbind_ProfileHeatmap_byMergedContrast.png")
+    
+    return profheatbymergedcontrast
     
 def visualization_PrepDirect():
     
