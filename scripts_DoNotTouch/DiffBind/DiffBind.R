@@ -68,7 +68,7 @@ peakdata<-dba.show(dbobject)$Intervals
 if (genome=="human"){
 	dbobject<-dba.blacklist(dbobject,blacklist=DBA_BLACKLIST_HG38,greylist=FALSE)
 } else if (genome=="mouse"){
-	dbobject<-dba.blacklist(dbobject,blacklist=paste(designpath,"/mm39-blacklist.bed",sep=""),greylist=FALSE)
+	#dbobject<-dba.blacklist(dbobject,blacklist=paste(designpath,"/mm39-blacklist.bed",sep=""),greylist=FALSE)
 }
 dbobject
 
