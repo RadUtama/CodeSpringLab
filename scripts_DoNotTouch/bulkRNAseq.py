@@ -975,6 +975,7 @@ def gseapy_RunPathway(geneset,genome,feature,inpath_design,outpath,outpath_pathw
     
     design = pd.read_table(inpath_design+'/design_matrix.txt',index_col=0)
     vardesign = design.T[(design.T.iloc[:,0]==refcond) | (design.T.iloc[:,0]==compared)].T.columns[0]
+    design = design.loc[design[vardesign].isin([refcond,compared]),:]
     class_vector = list(design[vardesign])
     reordering = ['GENE','NAME']+list(design.index)
 
