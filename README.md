@@ -8,13 +8,9 @@ Collection of bioinformatics pipelines and scripts for Cold Spring Harbor Labora
    
    Cutadapt
    
-   STAR
+   STAR and Kallisto
    
-   Kallisto
-   
-   featureCounts
-   
-   RSEM
+   featureCounts and RSEM
    
    DESeq2
    
@@ -34,11 +30,7 @@ Collection of bioinformatics pipelines and scripts for Cold Spring Harbor Labora
    
    DiffBind
    
-   Picard
-   
-   SAMtools
-   
-   deepTools
+   Picard, SAMtools, and deepTools
    
    Profile map, PCA, Heatmap, Volcano, and Box plots
 
@@ -54,11 +46,7 @@ Collection of bioinformatics pipelines and scripts for Cold Spring Harbor Labora
    
    DiffBind
    
-   Picard
-   
-   SAMtools
-   
-   deepTools
+   Picard, SAMtools, and deepTools
    
    Profile map, PCA, Heatmap, Volcano, and Box plots
    
