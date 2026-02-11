@@ -3,7 +3,9 @@ Collection of bioinformatics pipelines and scripts for Cold Spring Harbor Labora
 
 # Highlights
 1. Bulk RNA-seq
+   
    FastQC and fastq-screen
+   
    Cutadapt
    STAR
    Kallisto
@@ -13,7 +15,8 @@ Collection of bioinformatics pipelines and scripts for Cold Spring Harbor Labora
    GSEApy
    PCA, Heatmap, Volcano, and MA plots
 
-2. Bulk ATAC-seq
+3. Bulk ATAC-seq
+   
    FastQC and fastq-screen
    Cutadapt
    Bowtie2
@@ -24,7 +27,8 @@ Collection of bioinformatics pipelines and scripts for Cold Spring Harbor Labora
    deepTools
    Profile map, PCA, Heatmap, Volcano, and Box plots
 
-3. Bulk ChIP-seq
+5. Bulk ChIP-seq
+   
    FastQC and fastq-screen
    Cutadapt
    Bowtie2
