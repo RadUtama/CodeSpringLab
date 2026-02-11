@@ -30,7 +30,7 @@ Collection of bioinformatics pipelines and scripts for Cold Spring Harbor Labora
    
    DiffBind
    
-   Picard, SAMtools, and deepTools
+   Homer, Picard, SAMtools, and deepTools
    
    Profile map, PCA, Heatmap, Volcano, and Box plots
 
@@ -46,7 +46,7 @@ Collection of bioinformatics pipelines and scripts for Cold Spring Harbor Labora
    
    DiffBind
    
-   Picard, SAMtools, and deepTools
+   Homer, Picard, SAMtools, and deepTools
    
    Profile map, PCA, Heatmap, Volcano, and Box plots
    
