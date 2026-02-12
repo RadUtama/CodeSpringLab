@@ -22,32 +22,38 @@ def Tree():
 def DeleteJobs(jobid):
     
     for i in range(len(jobid)):
-        command = "qdel "+jobid[i]
-        jobdel=os.popen(command).read().splitlines()
+        command = "scancel "+jobid[i]
+        #command = "qdel "+jobid[i]
+        jobdel = os.popen(command).read().splitlines()
         print('Deleting job ID: '+jobid[i])
         while True:
-            command = "qstat"
-            del_status=os.popen(command).read().splitlines()
-            if del_status == []:
+            command = "squeue -u $USER"
+            #command = "qstat"
+            del_status = os.popen(command).read().splitlines()
+            if len(del_status) == 1:
+            #if del_status == []:
                 break
             else:
-                del_stat = pd.DataFrame(del_status)[0][2:].str.split(expand=True)[0].str.contains(jobid[i]).any()
+                del_stat = pd.DataFrame(del_status)[0][1:].str.split(expand=True)[0].str.contains(jobid[i]).any()
                 if del_stat == False:
                     break
             time.sleep(5)
             
 def DeleteOneJob(jobid):
-    
-    command = "qdel "+jobid[0]
+
+    command = "scancel "+jobid[0]
+    #command = "qdel "+jobid[0]
     jobdel=os.popen(command).read().splitlines()
     print('Deleting job ID: '+jobid[0])
     while True:
-        command = "qstat"
+        command = "squeue -u $USER"
+        #command = "qstat"
         del_status=os.popen(command).read().splitlines()
-        if del_status == []:
+        if len(del_status) == 1:
+        #if del_status == []:
             break
         else:
-            del_stat = pd.DataFrame(del_status)[0][2:].str.split(expand=True)[0].str.contains(jobid[0]).any()
+            del_stat = pd.DataFrame(del_status)[0][1:].str.split(expand=True)[0].str.contains(jobid[0]).any()
             if del_stat == False:
                 break
         time.sleep(5)
@@ -57,28 +63,42 @@ def Qstat(jobid):
     print("==================================")
     starttime = time.time()
     while True:
-        command = "qstat"
+        command = "squeue -u $USER"
+        #command = "qstat"
         running_status = os.popen(command).read().splitlines()
     
         clear_output(wait=True)
-    
-        if running_status == []:
+
+        if len(running_status) == 1:
+        #if running_status == []:
             print("All jobs done !" )
             print(".........................")
             print("Running time: "+str( round( ((time.time() - starttime) / 60) , 2 ) )+" minutes")
             runstat = "done"
-        elif pd.DataFrame(running_status)[0][2:].str.split(expand=True)[0].str.contains('|'.join(jobid)).any():
-            
-            all_stat = pd.DataFrame(running_status)[0][2:].str.split(expand=True)[4]
-            id_sub = pd.DataFrame(running_status)[0][2:].str.split(expand=True)[0].str.contains('|'.join(jobid))
+        elif pd.DataFrame(running_status)[0][1:].str.split(expand=True)[0].str.contains('|'.join(jobid)).any():
+        #elif pd.DataFrame(running_status)[0][2:].str.split(expand=True)[0].str.contains('|'.join(jobid)).any():
+
+            all_stat = pd.DataFrame(running_status)[0][1:].str.split(expand=True)[4]            
+            #all_stat = pd.DataFrame(running_status)[0][2:].str.split(expand=True)[4]
+            id_sub = pd.DataFrame(running_status)[0][1:].str.split(expand=True)[0].str.contains('|'.join(jobid))
+            #id_sub = pd.DataFrame(running_status)[0][2:].str.split(expand=True)[0].str.contains('|'.join(jobid))
             id_stat = all_stat[id_sub]
-            status_stat = id_stat.value_counts().rename(index={'r':'Number of jobs still running = ',
-                                                    'qw':'Number of jobs waiting in line = ',
-                                                    't':'Number of jobs about to run = ',
-                                                    'Rt':'Number of jobs about to run = ',
-                                                    'Rr':'Number of jobs about to run = ',
-                                                    'Eqw':'Number of jobs cannot run (server error) = ',
-                                                   })
+            status_stat = id_stat.value_counts().rename(index={'R':'Number of jobs still running = ',
+                                                'PD':'Number of jobs waiting in line = ',
+                                                'CG' : 'Number of jobs still finishing = ',
+                                                'CD' : 'Number of jobs completed = ',
+                                                'F' : 'Number of jobs failed = ',
+                                                'CA' : 'Number of jobs cancelled = ',
+                                                'TO' : 'Number of jobs timeout = ',
+                                                'CF' : 'Number of jobs configuring = '
+                                                })
+            #status_stat = id_stat.value_counts().rename(index={'r':'Number of jobs still running = ',
+            #                                        'qw':'Number of jobs waiting in line = ',
+            #                                        't':'Number of jobs about to run = ',
+            #                                        'Rt':'Number of jobs about to run = ',
+            #                                        'Rr':'Number of jobs about to run = ',
+            #                                        'Eqw':'Number of jobs cannot run (server error) = '
+            #                                       })
             print(status_stat)
             print(".........................")
             print("Running time: "+str( round( ((time.time() - starttime) / 60) , 2 ) )+" minutes")
@@ -175,9 +195,10 @@ def filetransfer_Prep():
         scriptpath_listdir=config.scriptpath_listdir
         scriptpath_copy=config.scriptpath_copy
     
-    #command = "source "+scriptpath_listdir+" "+read_path_original+" "+project_name
-    #joblist=os.popen(command).read().splitlines()
-    #print(joblist)
+    #command = "sbatch "+scriptpath_listdir+" "+read_path_original+" "+project_name
+    ##command = "source "+scriptpath_listdir+" "+read_path_original+" "+project_name
+    ##joblist=os.popen(command).read().splitlines()
+    ##print(joblist)
     
     #return read_path_original,read_path_destination,scriptpath_copy,scriptpath_listdir,genome,pairing,inpath_design
     return read_path_original+"/",read_path_destination+"/",scriptpath_copy,genome,pairing,inpath_design+"/"
@@ -222,10 +243,15 @@ def filetransfer_Copy(read_path_original,scriptpath_copy):
     
     jobid = []
 
-    command = "source "+scriptpath_copy+" "+read_path_original+" "+"../../csl_results/"+project_name+"/data/fastq"+" "+project_name
+    stderr = "-e ../../csl_results/"+project_name+"/log/error_copyFastq.txt"
+    stdout = "-o ../../csl_results/"+project_name+"/log/output_copyFastq.txt"
+    command = "sbatch "+stderr+" "+stdout+" "+scriptpath_copy+" "+read_path_original+" "+"../../csl_results/"+project_name+"/data/fastq"+" "+project_name
+    #command = "source "+scriptpath_copy+" "+read_path_original+" "+"../../csl_results/"+project_name+"/data/fastq"+" "+project_name
     job = os.popen(command).read().splitlines()
-    print(job[1])
-    jobid.append(job[1].split(' ')[2])
+    print(job[0])
+    #print(job[1])
+    jobid.append(job[0].split(' ')[3])
+    #jobid.append(job[1].split(' ')[2])
     
     return jobid
 
@@ -322,11 +348,16 @@ def fastqc_RunQC(readlist,outdir_fastqc,read_path_destination,scriptpath_fastqc)
     
     jobid = []
     for file in readlist:
-        command = "source "+scriptpath_fastqc+" "+read_path_destination+file+" "+outdir_fastqc+"/."+" "+project_name 
+        stderr = "-e ../../csl_results/"+project_name+"/log/error_fastQC.txt"
+        stdout = "-o ../../csl_results/"+project_name+"/log/output_fastQC.txt"
+        command = "sbatch "+stderr+" "+stdout+" "+scriptpath_fastqc+" "+read_path_destination+file+" "+outdir_fastqc+"/."+" "+project_name
+        #command = "source "+scriptpath_fastqc+" "+read_path_destination+file+" "+outdir_fastqc+"/."+" "+project_name 
         job = os.popen(command).read().splitlines()
-        print(job[1])
-        
-        jobid.append(job[1].split(' ')[2])
+        print(job[0])
+        #print(job[1])
+
+        jobid.append(job[0].split(' ')[3])
+        #jobid.append(job[1].split(' ')[2])
     
     return jobid
 
@@ -437,11 +468,16 @@ def cutadapt_RunTrimming(adapter,adapter2,minlen,read1_list,read2_list,trimmed1_
     
     jobid = []
     for i in range(len(read1_list)):
-        command = "source "+scriptpath_cutadapt+" "+minlen+" "+adapter+" "+adapter2+" "+trimmed1_list[i]+" "+trimmed2_list[i]+" "+read1_list[i]+" "+read2_list[i]+" "+project_name 
+        stderr = "-e ../../csl_results/"+project_name+"/log/error_cutadapt.txt"
+        stdout = "-o ../../csl_results/"+project_name+"/log/output_cutadapt.txt"
+        command = "sbatch "+stderr+" "+stdout+" "+scriptpath_cutadapt+" "+minlen+" "+adapter+" "+adapter2+" "+trimmed1_list[i]+" "+trimmed2_list[i]+" "+read1_list[i]+" "+read2_list[i]+" "+project_name
+        #command = "source "+scriptpath_cutadapt+" "+minlen+" "+adapter+" "+adapter2+" "+trimmed1_list[i]+" "+trimmed2_list[i]+" "+read1_list[i]+" "+read2_list[i]+" "+project_name 
         job = os.popen(command).read().splitlines()
-        print(job[1])
-        
-        jobid.append(job[1].split(' ')[2])
+        print(job[0])
+        #print(job[1])
+
+        jobid.append(job[0].split(' ')[3])
+        #jobid.append(job[1].split(' ')[2])
     
     return jobid
 
@@ -515,11 +551,17 @@ def bowtie2_RunAlignment(genome_index_path,read1_list,read2_list,out_prefix_list
     
     jobid = []
     for i in range(len(out_prefix_list)):
-        command = "source "+scriptpath_bowtie2+" "+out_prefix_list[i]+" "+genome_index_path+" "+read1_list[i]+" "+read2_list[i]+" "+effgenomesize+" "+chromsize+" "+project_name
+        stderr = "-e "+out_prefix_list[i]+"Log.final.out"
+        stdout = "-o ../../csl_results/"+project_name+"/log/output_bowtie2.txt"
+        command = "sbatch "+stderr+" "+stdout+" "+scriptpath_bowtie2+" "+out_prefix_list[i]+" "+genome_index_path+" "+read1_list[i]+" "+read2_list[i]+" "+effgenomesize+" "+chromsize+" "+project_name
+        #command = "source "+scriptpath_bowtie2+" "+out_prefix_list[i]+" "+genome_index_path+" "+read1_list[i]+" "+read2_list[i]+" "+effgenomesize+" "+chromsize+" "+project_name
         #job = os.popen(command).read().strip().splitlines()
         job = os.popen(command).read().splitlines()
-        print(job[1])
-        jobid.append(job[1].split(' ')[2])
+        print(job[0])
+        #print(job[1])
+
+        jobid.append(job[0].split(' ')[3])
+        #jobid.append(job[1].split(' ')[2])
     
     return jobid
 
@@ -666,11 +708,17 @@ def macs2_RunPeakCalling(scriptpath_macs2,genomesize,chromsize,bed_list,macs2_pr
     
     jobid = []
     for i in range(len(chip_bed_list)):
-        command = "source "+scriptpath_macs2+" "+prefix[i]+" "+chip_bed_list[i]+" "+genomesize+" "+chromsize+" "+macs2_prefix_list[i]+" "+anno_onlyChrNoMito+" "+project_name+" "+input_bed_list[i]+" "+homerspecies+" "+out_dir
+        stderr = "-e ../../csl_results/"+project_name+"/log/error_macs2.txt"
+        stdout = "-o ../../csl_results/"+project_name+"/log/output_macs2.txt"
+        command = "sbatch "+stderr+" "+stdout+" "+scriptpath_macs2+" "+prefix[i]+" "+chip_bed_list[i]+" "+genomesize+" "+chromsize+" "+macs2_prefix_list[i]+" "+anno_onlyChrNoMito+" "+project_name+" "+input_bed_list[i]+" "+homerspecies+" "+out_dir
+        #command = "source "+scriptpath_macs2+" "+prefix[i]+" "+chip_bed_list[i]+" "+genomesize+" "+chromsize+" "+macs2_prefix_list[i]+" "+anno_onlyChrNoMito+" "+project_name+" "+input_bed_list[i]+" "+homerspecies+" "+out_dir
         #job = os.popen(command).read().strip().splitlines()
         job = os.popen(command).read().splitlines()
-        print(job[1])
-        jobid.append(job[1].split(' ')[2])
+        print(job[0])
+        #print(job[1])
+
+        jobid.append(job[0].split(' ')[3])
+        #jobid.append(job[1].split(' ')[2])
     
     return jobid
 
@@ -787,11 +835,17 @@ def homer_RunAnnoTag(genome_homer,out_prefix_bowtie2_list,out_prefix_anno_list,o
     
     jobid = []
     for i in range(len(bed_list)):
-        command = "source "+scriptpath_homer_annotag+" "+out_prefix_bowtie2_list[i]+" "+out_prefix_tag_list[i]+" "+out_prefix_anno_list[i]+" "+genome_homer+" "+project_name
+        stderr = "-e ../../csl_results/"+project_name+"/log/error_homer_annotag.txt"
+        stdout = "-o ../../csl_results/"+project_name+"/log/output_homer_annotag.txt"
+        command = "sbatch "+stderr+" "+stdout+" "+scriptpath_homer_annotag+" "+out_prefix_bowtie2_list[i]+" "+out_prefix_tag_list[i]+" "+out_prefix_anno_list[i]+" "+genome_homer+" "+project_name
+        #command = "source "+scriptpath_homer_annotag+" "+out_prefix_bowtie2_list[i]+" "+out_prefix_tag_list[i]+" "+out_prefix_anno_list[i]+" "+genome_homer+" "+project_name
         #job = os.popen(command).read().strip().splitlines()
         job = os.popen(command).read().splitlines()
-        print(job[1])
-        jobid.append(job[1].split(' ')[2])
+        print(job[0])
+        #print(job[1])
+
+        jobid.append(job[0].split(' ')[3])
+        #jobid.append(job[1].split(' ')[2])
     
     return jobid
 
@@ -800,12 +854,18 @@ def homer_RunDiffPeak(genome_homer,out_dir_tag,scriptpath_homer_diffpeak,refcond
     global project_name
     
     jobid = []
-    command = "source "+scriptpath_homer_diffpeak+" "+out_dir_tag+" "+refcond_list+" "+compared_list+" "+genome_homer+" "+refcond+" "+compared+" "+project_name
+    stderr = "-e ../../csl_results/"+project_name+"/log/error_homer_diffpeak.txt"
+    stdout = "-o ../../csl_results/"+project_name+"/log/output_homer_diffpeak.txt"
+    command = "sbatch "+stderr+" "+stdout+" "+scriptpath_homer_diffpeak+" "+out_dir_tag+" "+refcond_list+" "+compared_list+" "+genome_homer+" "+refcond+" "+compared+" "+project_name
+    #command = "source "+scriptpath_homer_diffpeak+" "+out_dir_tag+" "+refcond_list+" "+compared_list+" "+genome_homer+" "+refcond+" "+compared+" "+project_name
     #job = os.popen(command).read().strip().splitlines()
     job = os.popen(command).read().splitlines()
-    print(job[1])
-    jobid.append(job[1].split(' ')[2])
-    
+    print(job[0])
+    #print(job[1])
+
+    jobid.append(job[0].split(' ')[3])
+    #jobid.append(job[1].split(' ')[2])
+
     return jobid
     
 def visualization_PrepDirect():
