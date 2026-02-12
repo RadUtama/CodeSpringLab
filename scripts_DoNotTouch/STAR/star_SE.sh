@@ -17,3 +17,7 @@ STAR --runThreadN 4 \
        --readFilesCommand zcat \
        --readFilesIn $3
 
+module load EBModules
+module load SAMtools/1.14-GCC-10.3.0
+
+samtools index -b ${1}Aligned.sortedByCoord.out.bam ${1}Aligned.sortedByCoord.out.bam.bai
