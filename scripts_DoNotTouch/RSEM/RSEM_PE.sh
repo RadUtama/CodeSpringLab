@@ -1,4 +1,8 @@
+module load EBModules
+module load RSeQC
 
+#/grid/bsr/home/utama/.local/bin/infer_experiment.py -r $5 -i $1 > $4_strand.txt
+infer_experiment.py -r $5 -i $1 > $4_strand.txt
 
 fw=$(awk 'NR==5 {print $NF}' $4_strand.txt)
 rv=$(awk 'NR==6 {print $NF}' $4_strand.txt)
