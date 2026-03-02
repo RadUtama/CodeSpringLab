@@ -137,7 +137,7 @@ def filetransfer_Prep():
         os.remove("../../csl_results/"+project_name+"/log/error_listFastq.txt")
     if param == "n":
         read_path_destination = "../../csl_results/"+project_name+"/data/fastq/"
-        print("Read files will be copied to ../../csl_results/"+project_name+"/data/fastq/")
+        #print("Read files will be copied to ../../csl_results/"+project_name+"/data/fastq/")
         print("==================================")
         print("Here's the list of available genomes:")
         genome_list = pd.Series(['human','mouse'])
@@ -154,6 +154,14 @@ def filetransfer_Prep():
         print("../scripts_DoNotTouch/test/fastq/")
         read_path_original = input()
         read_path_original = os.path.expanduser(read_path_original)
+        print("==================================")
+        print("Do you want to copy your fastq files to your home folder? Only recommended if the files are not in your lab/home folder yet or they will be removed in the near future:(y/n)")
+        copyfastq = input()
+        if copyfastq == 'n':
+            read_path_destination = read_path_original
+            os.makedirs("../../csl_results/"+project_name+"/data/fastq/",exist_ok=True)
+        else:
+            print("Read files will be copied to ../../csl_results/"+project_name+"/data/fastq/")
         print("==================================")
         print("Copy the path to design matrix folder (If it's in your home folder, type tilde sign ~):")
         print("\033[91m"+"If you want to use our example dataset, copy and paste this path below,"+"\x1b[0m")
