@@ -20,8 +20,10 @@ Collection of bioinformatics pipelines and scripts for Cold Spring Harbor Labora
    
    PCA, Heatmap, Volcano, and MA plots
 
-3. Bulk ATAC-seq:
-   
+2. Bulk ATAC-seq:
+
+![Bulk ATAC-seq](./scripts_DoNotTouch/flowchart_atac.png)
+
    FastQC and fastq-screen
    
    Cutadapt
@@ -36,8 +38,10 @@ Collection of bioinformatics pipelines and scripts for Cold Spring Harbor Labora
    
    Profile map, PCA, Heatmap, Volcano, and Box plots
 
-4. Bulk ChIP-seq:
-   
+3. Bulk ChIP-seq:
+
+![Bulk ChIP-seq](./scripts_DoNotTouch/flowchart_chip.png)
+
    FastQC and fastq-screen
    
    Cutadapt
