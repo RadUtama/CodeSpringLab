@@ -979,9 +979,17 @@ def gseapy_Prep():
     
     global project_name
     
-    outpath_pathway = "../../csl_results/"+project_name+"/data/gseapy/"
+    print("========================================")
+    print("Which phenotype/condition/replicate/batch should be the reference/baseline?(e.g control)")
+    refcond = input()
+    
+    print("========================================")
+    print("Which phenotype/condition/replicate/batch to compare?(e.g treated)")
+    compared = input()
+    
+    outpath_pathway = res_dir+project_name+"/data/gseapy/"+compared+'_vs_'+refcond+"/"
     os.makedirs(outpath_pathway,exist_ok=True)
-    print("GSEApy results are stored in ../../csl_results/"+project_name+"/data/gseapy/")
+    print("GSEApy results are stored in "+res_dir+project_name+"/data/gseapy/")
 
     print("========================================")
     print("Specify gene set database:")
@@ -998,6 +1006,18 @@ def gseapy_PrepDirect():
 
     global project_name
 
+    print("========================================")
+    print("Which phenotype/condition/replicate/batch should be the reference/baseline?(e.g control)")
+    refcond = input()
+    
+    print("========================================")
+    print("Which phenotype/condition/replicate/batch to compare?(e.g treated)")
+    compared = input()
+    
+    outpath_pathway = res_dir+project_name+"/data/gseapy/"+compared+'_vs_'+refcond+"/"
+    os.makedirs(outpath_pathway,exist_ok=True)
+    print("GSEApy results are stored in "+res_dir+project_name+"/data/gseapy/"+compared+'_vs_'+refcond+"/")
+    
     outpath_pathway = "../../csl_results/"+project_name+"/data/gseapy/"
     os.makedirs(outpath_pathway,exist_ok=True)
     print("GSEApy results are stored in ../../csl_results/"+project_name+"/data/gseapy/")
@@ -1018,14 +1038,6 @@ def gseapy_PrepDirect():
     print("========================================")
     print("Specify the path to folder containing normalized counts from DE:")
     outpath = input()
-
-    print("========================================")
-    print("Which phenotype/condition/replicate/batch should be the reference/baseline?(e.g control)")
-    refcond = input()
-    
-    print("========================================")
-    print("Which phenotype/condition/replicate/batch to compare?(e.g treated)")
-    compared = input()
 
     print("========================================")
     print("Specify gene set database:")
