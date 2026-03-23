@@ -13,10 +13,13 @@ import imgkit
 
 project_name=config.project_name
 param=config.parameters_exist
+res_dir=config.results_directory
 
 def Tree():
     
-    cmd = "tree ../../csl_results/"
+    global res_dir
+    
+    cmd = "tree "+res_dir
     print(os.popen(cmd).read())
 
 def DeleteJobs(jobid):
@@ -126,16 +129,18 @@ def filetransfer_Prep():
         
     global project_name
     global param
-    os.makedirs("../../csl_results/"+project_name+"/data/",exist_ok=True)
-    #os.makedirs("../../csl_results/"+project_name+"/data/manifest/",exist_ok=True)
-    os.makedirs("../../csl_results/"+project_name+"/log/",exist_ok=True)
+    global res_dir
     
-    if os.path.exists("../../csl_results/"+project_name+"/log/output_listFastq.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_listFastq.txt"):
-        os.remove("../../csl_results/"+project_name+"/log/output_listFastq.txt")
-        os.remove("../../csl_results/"+project_name+"/log/error_listFastq.txt")
+    os.makedirs(res_dir+project_name+"/data/",exist_ok=True)
+    #os.makedirs(res_dir+project_name+"/data/manifest/",exist_ok=True)
+    os.makedirs(res_dir+project_name+"/log/",exist_ok=True)
+    
+    if os.path.exists(res_dir+project_name+"/log/output_listFastq.txt") & os.path.exists(res_dir+project_name+"/log/error_listFastq.txt"):
+        os.remove(res_dir+project_name+"/log/output_listFastq.txt")
+        os.remove(res_dir+project_name+"/log/error_listFastq.txt")
     if param == "n":
-        read_path_destination = "../../csl_results/"+project_name+"/data/fastq/"
-        #print("Read files will be copied to ../../csl_results/"+project_name+"/data/fastq/")
+        read_path_destination = res_dir+project_name+"/data/fastq/"
+        #print("Read files will be copied to "+res_dir+project_name+"/data/fastq/")
         print("==================================")
         print("Here's the list of available genomes:")
         genome_list = pd.Series(['human','mouse'])
@@ -143,13 +148,13 @@ def filetransfer_Prep():
         print(genome_list)
         print("==================================")
         print("Specify the index to the genome:(e.g 0)")
-        print("\033[91m"+"If you want to use our example dataset, type the number"+"\033[94m"+" 0"+"\x1b[0m")
+        print("\033[91m"+"If you want to use our example dataset, type the number"+"\033[94m"+" 1"+"\x1b[0m")
         genome_index = int(input())
         genome = genome_list[genome_index]
         print("==================================")
         print("Copy the path to your original read files folder:")
         print("\033[91m"+"If you want to use our example dataset, copy and paste this path below,"+"\x1b[0m")
-        print("../scripts_DoNotTouch/test/fastq_chip/")
+        print("../scripts_DoNotTouch/test/fastq/")
         read_path_original = input()
         read_path_original = os.path.expanduser(read_path_original)
         print("==================================")
@@ -157,13 +162,13 @@ def filetransfer_Prep():
         copyfastq = input()
         if copyfastq == 'n':
             read_path_destination = read_path_original
-            os.makedirs("../../csl_results/"+project_name+"/data/fastq/",exist_ok=True)
+            os.makedirs(res_dir+project_name+"/data/fastq/",exist_ok=True)
         else:
-            print("Read files will be copied to ../../csl_results/"+project_name+"/data/fastq/")
+            print("Read files will be copied to "+res_dir+project_name+"/data/fastq/")
         print("==================================")
         print("Copy the path to design matrix folder (If it's in your home folder, type tilde sign ~):")
         print("\033[91m"+"If you want to use our example dataset, copy and paste this path below,"+"\x1b[0m")
-        print("../scripts_DoNotTouch/test/manifest_chip/")
+        print("../scripts_DoNotTouch/test/manifest/")
         inpath_design = input()
         inpath_design = os.path.expanduser(inpath_design)
         print("==================================")
@@ -202,7 +207,7 @@ def filetransfer_Prep():
         inpath_design=config.inpath_design
         scriptpath_listdir=config.scriptpath_listdir
         scriptpath_copy=config.scriptpath_copy
-    
+
     #command = "sbatch "+scriptpath_listdir+" "+read_path_original+" "+project_name
     ##command = "source "+scriptpath_listdir+" "+read_path_original+" "+project_name
     ##joblist=os.popen(command).read().splitlines()
@@ -214,16 +219,18 @@ def filetransfer_Prep():
 def filetransfer_ListDir(read_path_original):
     
     global project_name
+    global res_dir
+    
     dirfileset = ['empty']
     
-    if os.path.exists("../../csl_results/"+project_name+"/log/output_copyFastq.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_copyFastq.txt"):
-        os.remove("../../csl_results/"+project_name+"/log/output_copyFastq.txt")
-        os.remove("../../csl_results/"+project_name+"/log/error_copyFastq.txt")
+    if os.path.exists(res_dir+project_name+"/log/output_copyFastq.txt") & os.path.exists(res_dir+project_name+"/log/error_copyFastq.txt"):
+        os.remove(res_dir+project_name+"/log/output_copyFastq.txt")
+        os.remove(res_dir+project_name+"/log/error_copyFastq.txt")
     
     try:
         print("Here's the list of files in the original folder:")
         print("Index")
-        listori = pd.read_csv("../../csl_results/"+project_name+"/log/output_listFastq.txt",header=None)
+        listori = pd.read_csv(res_dir+project_name+"/log/output_listFastq.txt",header=None)
         listori = listori[listori[0].str.endswith('fastq.gz')]
         print(listori)
 
@@ -246,15 +253,17 @@ def filetransfer_PrepDirect():
 def filetransfer_Copy(read_path_original,scriptpath_copy):
     
     global project_name
-    if os.path.exists("../../csl_results/"+project_name+"/data/fastq") :
-        shutil.rmtree("../../csl_results/"+project_name+"/data/fastq")
+    global res_dir
+    
+    if os.path.exists(res_dir+project_name+"/data/fastq") :
+        shutil.rmtree(res_dir+project_name+"/data/fastq")
     
     jobid = []
 
-    stderr = "-e ../../csl_results/"+project_name+"/log/error_copyFastq.txt"
-    stdout = "-o ../../csl_results/"+project_name+"/log/output_copyFastq.txt"
-    command = "sbatch "+stderr+" "+stdout+" "+scriptpath_copy+" "+read_path_original+" "+"../../csl_results/"+project_name+"/data/fastq"+" "+project_name
-    #command = "source "+scriptpath_copy+" "+read_path_original+" "+"../../csl_results/"+project_name+"/data/fastq"+" "+project_name
+    stderr = "-e "+res_dir+project_name+"/log/error_copyFastq.txt"
+    stdout = "-o "+res_dir+project_name+"/log/output_copyFastq.txt"
+    command = "sbatch "+stderr+" "+stdout+" "+scriptpath_copy+" "+read_path_original+" "+res_dir+project_name+"/data/fastq"+" "+project_name
+    #command = "source "+scriptpath_copy+" "+read_path_original+" "+res_dir+project_name+"/data/fastq"+" "+project_name
     job = os.popen(command).read().splitlines()
     print(job[0])
     #print(job[1])
@@ -266,6 +275,7 @@ def filetransfer_Copy(read_path_original,scriptpath_copy):
 def filetransfer_ListDest(directory):
     
     global project_name
+    global res_dir
     
     print("Here's the list of contents:")
     print("Index")
@@ -276,7 +286,7 @@ def filetransfer_ListDest(directory):
     
     dirfileset = directory + dirlist
     
-    rmhidden = [shutil.rmtree(f) for f in os.listdir("../../csl_results/"+project_name+"/data/fastq") if f.startswith(".")]
+    rmhidden = [shutil.rmtree(f) for f in os.listdir(res_dir+project_name+"/data/fastq") if f.startswith(".")]
     
     return dirfileset
 
@@ -315,26 +325,28 @@ def filetransfer_Convert(directory,inpath_design):
 def fastqc_Prep(directory):
     
     global project_name
-    if os.path.exists("../../csl_results/"+project_name+"/log/output_fastQC.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_fastQC.txt"):
-        os.remove("../../csl_results/"+project_name+"/log/output_fastQC.txt")
-        os.remove("../../csl_results/"+project_name+"/log/error_fastQC.txt")
+    global res_dir
+    
+    if os.path.exists(res_dir+project_name+"/log/output_fastQC.txt") & os.path.exists(res_dir+project_name+"/log/error_fastQC.txt"):
+        os.remove(res_dir+project_name+"/log/output_fastQC.txt")
+        os.remove(res_dir+project_name+"/log/error_fastQC.txt")
     
     folder_fastqc = "fastqc"
     print("========================================")
     print("If you have trimmed the adapters with cutadapt prior, do you want to use these trimmed reads instead?:(y/n)")
     usetrim = input()
     if usetrim == 'y':
-        directory = "../../csl_results/"+project_name+"/data/cutadapt/"
+        directory = res_dir+project_name+"/data/cutadapt/"
         folder_fastqc = "fastqc_cutadapt"
     print("========================================")
     
     readlist = pd.Series(os.listdir(directory))
     readlist = readlist[readlist.str.endswith('fastq.gz')]
     
-    outdir_fastqc = "../../csl_results/"+project_name+"/data/"+folder_fastqc+"/"
+    outdir_fastqc = res_dir+project_name+"/data/"+folder_fastqc+"/"
     os.makedirs(outdir_fastqc,exist_ok=True)
     
-    print("FastQC results will be stored in ../../csl_results/"+project_name+"/data/"+folder_fastqc+"/")
+    print("FastQC results will be stored in "+res_dir+project_name+"/data/"+folder_fastqc+"/")
     
     scriptpath_fastqc = '../scripts_DoNotTouch/FastQC/qsub_fastqc.sh'
 
@@ -353,11 +365,12 @@ def fastqc_PrepDirect():
 def fastqc_RunQC(readlist,outdir_fastqc,read_path_destination,scriptpath_fastqc):
             
     global project_name
+    global res_dir
     
     jobid = []
     for file in readlist:
-        stderr = "-e ../../csl_results/"+project_name+"/log/error_fastQC.txt"
-        stdout = "-o ../../csl_results/"+project_name+"/log/output_fastQC.txt"
+        stderr = "-e "+res_dir+project_name+"/log/error_fastQC.txt"
+        stdout = "-o "+res_dir+project_name+"/log/output_fastQC.txt"
         command = "sbatch "+stderr+" "+stdout+" "+scriptpath_fastqc+" "+read_path_destination+file+" "+outdir_fastqc+"/."+" "+project_name
         #command = "source "+scriptpath_fastqc+" "+read_path_destination+file+" "+outdir_fastqc+"/."+" "+project_name 
         job = os.popen(command).read().splitlines()
@@ -368,7 +381,7 @@ def fastqc_RunQC(readlist,outdir_fastqc,read_path_destination,scriptpath_fastqc)
         #jobid.append(job[1].split(' ')[2])
     
     return jobid
-
+    
 def fastqc_ListDir(outdir_fastqc):
     
     dirlist = pd.Series(os.listdir(outdir_fastqc))
@@ -413,19 +426,21 @@ def fastqc_Visualization(outdir_fastqc):
 def cutadapt_Prep(directory,pairing):
     
     global project_name
-    if os.path.exists("../../csl_results/"+project_name+"/log/output_cutadapt.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_cutadapt.txt"):
-        os.remove("../../csl_results/"+project_name+"/log/output_cutadapt.txt")
-        os.remove("../../csl_results/"+project_name+"/log/error_cutadapt.txt")
+    global res_dir
+    
+    if os.path.exists(res_dir+project_name+"/log/output_cutadapt.txt") & os.path.exists(res_dir+project_name+"/log/error_cutadapt.txt"):
+        os.remove(res_dir+project_name+"/log/output_cutadapt.txt")
+        os.remove(res_dir+project_name+"/log/error_cutadapt.txt")
     
     readlist = pd.Series(os.listdir(directory))
     readlist = readlist[readlist.str.endswith('fastq.gz')]
     
     prefix = readlist.str.replace('_R1_001.fastq.gz','',regex=False).str.replace('_R2_001.fastq.gz','',regex=False).unique()
     
-    outdir_cutadapt = "../../csl_results/"+project_name+"/data/cutadapt/"
+    outdir_cutadapt = res_dir+project_name+"/data/cutadapt/"
     os.makedirs(outdir_cutadapt,exist_ok=True)
     
-    print("Trimmed reads results will be stored in ../../csl_results/"+project_name+"/data/cutadapt/")
+    print("Trimmed reads results will be stored in "+res_dir+project_name+"/data/cutadapt/")
     
     if pairing == "y":
         scriptpath_cutadapt = '../scripts_DoNotTouch/cutadapt_PE/qsub_cutadapt_PE.sh'
@@ -473,11 +488,12 @@ def cutadapt_PrepDirect():
 def cutadapt_RunTrimming(adapter,adapter2,minlen,read1_list,read2_list,trimmed1_list,trimmed2_list,scriptpath_cutadapt):
             
     global project_name
+    global res_dir
     
     jobid = []
     for i in range(len(read1_list)):
-        stderr = "-e ../../csl_results/"+project_name+"/log/error_cutadapt.txt"
-        stdout = "-o ../../csl_results/"+project_name+"/log/output_cutadapt.txt"
+        stderr = "-e "+res_dir+project_name+"/log/error_cutadapt.txt"
+        stdout = "-o "+res_dir+project_name+"/log/output_cutadapt.txt"
         command = "sbatch "+stderr+" "+stdout+" "+scriptpath_cutadapt+" "+minlen+" "+adapter+" "+adapter2+" "+trimmed1_list[i]+" "+trimmed2_list[i]+" "+read1_list[i]+" "+read2_list[i]+" "+project_name
         #command = "source "+scriptpath_cutadapt+" "+minlen+" "+adapter+" "+adapter2+" "+trimmed1_list[i]+" "+trimmed2_list[i]+" "+read1_list[i]+" "+read2_list[i]+" "+project_name 
         job = os.popen(command).read().splitlines()
@@ -492,27 +508,29 @@ def cutadapt_RunTrimming(adapter,adapter2,minlen,read1_list,read2_list,trimmed1_
 def bowtie2_Prep(genome,pairing,read_dir):
         
     global project_name
-    if os.path.exists("../../csl_results/"+project_name+"/log/output_bowtie2.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_bowtie2.txt"):
-        os.remove("../../csl_results/"+project_name+"/log/output_bowtie2.txt")
-        os.remove("../../csl_results/"+project_name+"/log/error_bowtie2.txt")
+    global res_dir
+    
+    if os.path.exists(res_dir+project_name+"/log/output_bowtie2.txt") & os.path.exists(res_dir+project_name+"/log/error_bowtie2.txt"):
+        os.remove(res_dir+project_name+"/log/output_bowtie2.txt")
+        os.remove(res_dir+project_name+"/log/error_bowtie2.txt")
     
     print("========================================")
     print("If you have trimmed the adapters with cutadapt prior, do you want to use these trimmed reads instead?:(y/n)")
     usetrim = input()
     if usetrim == 'y':
-        read_dir = "../../csl_results/"+project_name+"/data/cutadapt/"
+        read_dir = res_dir+project_name+"/data/cutadapt/"
     print("========================================")
     
     prefix = pd.Series(os.listdir(read_dir))
     prefix = prefix[prefix.str.endswith('fastq.gz')]
     prefix = prefix.str.replace('_R1_001.fastq.gz','',regex=False).str.replace('_R2_001.fastq.gz','',regex=False).unique()
     
-    out_dir = "../../csl_results/"+project_name+"/data/bowtie2/"
+    out_dir = res_dir+project_name+"/data/bowtie2/"
    
     for i in range(len(prefix)):
         os.makedirs(out_dir+prefix[i],exist_ok=True)
 
-    print("Bowtie2 alignment results will be stored in ../../csl_results/"+project_name+"/data/bowtie2/")
+    print("Bowtie2 alignment results will be stored in "+res_dir+project_name+"/data/bowtie2/")
     
     if genome == 'mouse':
         effgenomesize = "2654621783"
@@ -553,14 +571,15 @@ def bowtie2_PrepDirect():
 def bowtie2_RunAlignment(genome_index_path,read1_list,read2_list,out_prefix_list,out_dir,effgenomesize,chromsize,scriptpath_bowtie2):
         
     global project_name
+    global res_dir
     
-    cmd_dir = "cat > ../../csl_results/"+project_name+"/log/error_bowtie2.txt"
+    cmd_dir = "cat > "+res_dir+project_name+"/log/error_bowtie2.txt"
     cmd_dir_run = os.popen(cmd_dir)
     
     jobid = []
     for i in range(len(out_prefix_list)):
         stderr = "-e "+out_prefix_list[i]+"Log.final.out"
-        stdout = "-o ../../csl_results/"+project_name+"/log/output_bowtie2.txt"
+        stdout = "-o "+res_dir+project_name+"/log/output_bowtie2.txt"
         command = "sbatch "+stderr+" "+stdout+" "+scriptpath_bowtie2+" "+out_prefix_list[i]+" "+genome_index_path+" "+read1_list[i]+" "+read2_list[i]+" "+effgenomesize+" "+chromsize+" "+project_name
         #command = "source "+scriptpath_bowtie2+" "+out_prefix_list[i]+" "+genome_index_path+" "+read1_list[i]+" "+read2_list[i]+" "+effgenomesize+" "+chromsize+" "+project_name
         #job = os.popen(command).read().strip().splitlines()
@@ -576,7 +595,9 @@ def bowtie2_RunAlignment(genome_index_path,read1_list,read2_list,out_prefix_list
 def bowtie2_ListDir(directory):
     
     global project_name
-    bowtie2logdir = "../../csl_results/"+project_name+"/data/bowtie2_summary/"
+    global res_dir
+    
+    bowtie2logdir = res_dir+project_name+"/data/bowtie2_summary/"
     os.makedirs(bowtie2logdir,exist_ok=True)
     
     dirlist = pd.Series(os.listdir(directory))
@@ -600,19 +621,20 @@ def bowtie2_ListDir(directory):
     
     return log_matrix
 
-
 def macs2_Prep(genome,out_dir,pairing,inpath_design):
     
     global project_name
-    if os.path.exists("../../csl_results/"+project_name+"/log/output_macs2.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_macs2.txt"):
-        os.remove("../../csl_results/"+project_name+"/log/output_macs2.txt")
-        os.remove("../../csl_results/"+project_name+"/log/error_macs2.txt")
+    global res_dir
+    
+    if os.path.exists(res_dir+project_name+"/log/output_macs2.txt") & os.path.exists(res_dir+project_name+"/log/error_macs2.txt"):
+        os.remove(res_dir+project_name+"/log/output_macs2.txt")
+        os.remove(res_dir+project_name+"/log/error_macs2.txt")
     
     design = pd.read_table(inpath_design+'/design_matrix.txt',index_col=0)
     prefix = pd.Series(design.index)
     #prefix = pd.Series(os.listdir(os.path.expanduser(out_dir)))
     
-    macs2_dir = "../../csl_results/"+project_name+"/data/macs2/"
+    macs2_dir = res_dir+project_name+"/data/macs2/"
    
     for i in range(len(prefix)):
         os.makedirs(macs2_dir+prefix[i],exist_ok=True)
@@ -669,6 +691,7 @@ def macs2_PrepDirect():
 def macs2_RunPeakCalling(scriptpath_macs2,genomesize,chromsize,bed_list,macs2_prefix_list,prefix,anno_onlyChrNoMito,inpath_design,homerspecies,out_dir):
      
     global project_name
+    global res_dir
     
     ####### Split bed_list into chip and input #####
     design = pd.read_table(inpath_design+'/design_matrix.txt',index_col=0)
@@ -716,8 +739,8 @@ def macs2_RunPeakCalling(scriptpath_macs2,genomesize,chromsize,bed_list,macs2_pr
     
     jobid = []
     for i in range(len(chip_bed_list)):
-        stderr = "-e ../../csl_results/"+project_name+"/log/error_macs2.txt"
-        stdout = "-o ../../csl_results/"+project_name+"/log/output_macs2.txt"
+        stderr = "-e "+res_dir+project_name+"/log/error_macs2.txt"
+        stdout = "-o "+res_dir+project_name+"/log/output_macs2.txt"
         command = "sbatch "+stderr+" "+stdout+" "+scriptpath_macs2+" "+prefix[i]+" "+chip_bed_list[i]+" "+genomesize+" "+chromsize+" "+macs2_prefix_list[i]+" "+anno_onlyChrNoMito+" "+project_name+" "+input_bed_list[i]+" "+homerspecies+" "+out_dir
         #command = "source "+scriptpath_macs2+" "+prefix[i]+" "+chip_bed_list[i]+" "+genomesize+" "+chromsize+" "+macs2_prefix_list[i]+" "+anno_onlyChrNoMito+" "+project_name+" "+input_bed_list[i]+" "+homerspecies+" "+out_dir
         #job = os.popen(command).read().strip().splitlines()
@@ -733,8 +756,9 @@ def macs2_RunPeakCalling(scriptpath_macs2,genomesize,chromsize,bed_list,macs2_pr
 def macs2_PeakList():
     
     global project_name
+    global res_dir
     
-    outpath = "../../csl_results/"+project_name+"/data/macs2/"
+    outpath = res_dir+project_name+"/data/macs2/"
     dirlist = DataFrame(pd.Series(os.listdir(outpath)))
     dirlist.index = range(len(dirlist))
     print(dirlist)
@@ -770,12 +794,14 @@ def homer_PrepDirect():
 def homer_Prep(genome,out_dir,inpath_design):
         
     global project_name
-    if os.path.exists("../../csl_results/"+project_name+"/log/output_homer_annotag.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_homer_annotag.txt"):
-        os.remove("../../csl_results/"+project_name+"/log/output_homer_annotag.txt")
-        os.remove("../../csl_results/"+project_name+"/log/error_homer_annotag.txt")
-    if os.path.exists("../../csl_results/"+project_name+"/log/output_homer_diffpeak.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_homer_diffpeak.txt"):
-        os.remove("../../csl_results/"+project_name+"/log/output_homer_diffpeak.txt")
-        os.remove("../../csl_results/"+project_name+"/log/error_homer_diffpeak.txt")
+    global res_dir
+    
+    if os.path.exists(res_dir+project_name+"/log/output_homer_annotag.txt") & os.path.exists(res_dir+project_name+"/log/error_homer_annotag.txt"):
+        os.remove(res_dir+project_name+"/log/output_homer_annotag.txt")
+        os.remove(res_dir+project_name+"/log/error_homer_annotag.txt")
+    if os.path.exists(res_dir+project_name+"/log/output_homer_diffpeak.txt") & os.path.exists(res_dir+project_name+"/log/error_homer_diffpeak.txt"):
+        os.remove(res_dir+project_name+"/log/output_homer_diffpeak.txt")
+        os.remove(res_dir+project_name+"/log/error_homer_diffpeak.txt")
     
     if genome == 'mouse':
         genome_homer = "mm10"
@@ -819,14 +845,14 @@ def homer_Prep(genome,out_dir,inpath_design):
     
     prefix = pd.Series(os.listdir(out_dir))
     
-    out_dir_anno = "../../csl_results/"+project_name+"/data/MACS2/"
-    out_dir_tag = "../../csl_results/"+project_name+"/data/homer/"
+    out_dir_anno = res_dir+project_name+"/data/MACS2/"
+    out_dir_tag = res_dir+project_name+"/data/homer/"
    
     for i in range(len(prefix)):
         os.makedirs(out_dir_tag+'/'+prefix[i],exist_ok=True)
 
     print("========================================")
-    print("Homer tag results will be stored in ../../csl_results/"+project_name+"/data/homer/")
+    print("Homer tag results will be stored in "+res_dir+project_name+"/data/homer/")
     
     out_prefix_bowtie2_list = out_dir+'/'+prefix+'/'+prefix
     out_prefix_anno_list = out_dir_anno+'/'+prefix+'/'+prefix
@@ -840,11 +866,12 @@ def homer_Prep(genome,out_dir,inpath_design):
 def homer_RunAnnoTag(genome_homer,out_prefix_bowtie2_list,out_prefix_anno_list,out_prefix_tag_list,scriptpath_homer_annotag):
      
     global project_name
+    global res_dir
     
     jobid = []
     for i in range(len(bed_list)):
-        stderr = "-e ../../csl_results/"+project_name+"/log/error_homer_annotag.txt"
-        stdout = "-o ../../csl_results/"+project_name+"/log/output_homer_annotag.txt"
+        stderr = "-e "+res_dir+project_name+"/log/error_homer_annotag.txt"
+        stdout = "-o "+res_dir+project_name+"/log/output_homer_annotag.txt"
         command = "sbatch "+stderr+" "+stdout+" "+scriptpath_homer_annotag+" "+out_prefix_bowtie2_list[i]+" "+out_prefix_tag_list[i]+" "+out_prefix_anno_list[i]+" "+genome_homer+" "+project_name
         #command = "source "+scriptpath_homer_annotag+" "+out_prefix_bowtie2_list[i]+" "+out_prefix_tag_list[i]+" "+out_prefix_anno_list[i]+" "+genome_homer+" "+project_name
         #job = os.popen(command).read().strip().splitlines()
@@ -860,10 +887,11 @@ def homer_RunAnnoTag(genome_homer,out_prefix_bowtie2_list,out_prefix_anno_list,o
 def homer_RunDiffPeak(genome_homer,out_dir_tag,scriptpath_homer_diffpeak,refcond,compared,refcond_list,compared_list):
      
     global project_name
+    global res_dir
     
     jobid = []
-    stderr = "-e ../../csl_results/"+project_name+"/log/error_homer_diffpeak.txt"
-    stdout = "-o ../../csl_results/"+project_name+"/log/output_homer_diffpeak.txt"
+    stderr = "-e "+res_dir+project_name+"/log/error_homer_diffpeak.txt"
+    stdout = "-o "+res_dir+project_name+"/log/output_homer_diffpeak.txt"
     command = "sbatch "+stderr+" "+stdout+" "+scriptpath_homer_diffpeak+" "+out_dir_tag+" "+refcond_list+" "+compared_list+" "+genome_homer+" "+refcond+" "+compared+" "+project_name
     #command = "source "+scriptpath_homer_diffpeak+" "+out_dir_tag+" "+refcond_list+" "+compared_list+" "+genome_homer+" "+refcond+" "+compared+" "+project_name
     #job = os.popen(command).read().strip().splitlines()
@@ -890,10 +918,12 @@ def visualization_PrepDirect():
     return genome,out_peak+"/"
     
 def visualization_Prep(genome,out_peak):
+
+    global res_dir
     
-    if os.path.exists("../../csl_results/"+project_name+"/log/output_genomeTracks.txt") & os.path.exists("../../csl_results/"+project_name+"/log/error_genomeTracks.txt"):
-        os.remove("../../csl_results/"+project_name+"/log/output_genomeTracks.txt")
-        os.remove("../../csl_results/"+project_name+"/log/error_genomeTracks.txt")
+    if os.path.exists(res_dir+project_name+"/log/output_genomeTracks.txt") & os.path.exists(res_dir+project_name+"/log/error_genomeTracks.txt"):
+        os.remove(res_dir+project_name+"/log/output_genomeTracks.txt")
+        os.remove(res_dir+project_name+"/log/error_genomeTracks.txt")
     
     print("========================================")
     print("Specify which genome region to plot tracks:(e.g chr1:2700000-2800000)")
@@ -904,7 +934,7 @@ def visualization_Prep(genome,out_peak):
 
     macs2_prefix_list = out_peak+'/'+prefix+'/'
     
-    tracks_dir = "../../csl_results/"+project_name+"/data/genomeTracks/"
+    tracks_dir = res_dir+project_name+"/data/genomeTracks/"
     os.makedirs(tracks_dir,exist_ok=True)
     
     scriptpath_tracks = '../scripts_DoNotTouch/genomeTracks/qsub_genomeTracks.sh'
