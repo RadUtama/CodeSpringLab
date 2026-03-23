@@ -1,4 +1,4 @@
-![Logo CSL](./scripts_DoNotTouch/Logo_CSL.png)
+<img src="./scripts_DoNotTouch/Logo_CSL.png" width="100" />
 
 # CodeSpringLab
 Collection of bioinformatics pipelines and scripts for Cold Spring Harbor Laboratory created by BSR (Bioinformatics shared resources)
