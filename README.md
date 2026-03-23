@@ -4,7 +4,7 @@ Collection of bioinformatics pipelines and scripts for Cold Spring Harbor Labora
 # Highlights
 1. Bulk RNA-seq:
 
-/(./scripts_DoNotTouch/flowchart.png)
+!(./scripts_DoNotTouch/flowchart.png)
    
    FastQC and fastq-screen
    
