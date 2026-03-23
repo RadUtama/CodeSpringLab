@@ -3,6 +3,7 @@
 #SBATCH --mem-per-cpu=5G
 #SBATCH --cpus-per-task=8
 #SBATCH --export=NONE
+#SBATCH --time=2-00:00:00
 
 source ../scripts_DoNotTouch/MACS2/macs2_chip_SE.sh $1 $2 $3 $4 $5 $6 $8 $9 ${10}
 
