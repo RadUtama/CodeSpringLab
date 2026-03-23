@@ -1,5 +1,5 @@
 <p align="center">
-   <img src="./scripts_DoNotTouch/Logo_CSL.png" width="500" />
+   <img src="./scripts_DoNotTouch/Logo_CSL.png" width="300" />
 </p>
 
 # CodeSpringLab
@@ -8,7 +8,9 @@ Collection of bioinformatics pipelines and scripts for Cold Spring Harbor Labora
 # Highlights
 1. Bulk RNA-seq:
 
-![Bulk RNA-seq](./scripts_DoNotTouch/flowchart.png)
+<p align="center">
+   <img src="./scripts_DoNotTouch/flowchart.png" width="300" />
+</p>
    
    FastQC and fastq-screen
    
