@@ -17,7 +17,7 @@ def config():
         if len(res_dir) == 0:
             res_dir = "../../csl_results/"
         else:
-            res_dir = res_dir+"/"
+            res_dir = res_dir+"/csl_results/"
         
         conf = open("../scripts_DoNotTouch/config.py", "w")
         conf.write("project_name="+"'"+project_name+"'"+"\n")
