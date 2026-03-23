@@ -3,6 +3,7 @@
 #SBATCH --mem-per-cpu=1G
 #SBATCH --cpus-per-task=1
 #SBATCH --export=NONE
+#SBATCH --time=2-00:00:00
 
 source ../scripts_DoNotTouch/fastq/copy.sh $1 $2 
 
