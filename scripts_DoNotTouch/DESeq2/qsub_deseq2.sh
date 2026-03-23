@@ -3,6 +3,7 @@
 #SBATCH --mem-per-cpu=1G
 #SBATCH --cpus-per-task=4
 #SBATCH --export=NONE
+#SBATCH --time=2-00:00:00
 
 source ../scripts_DoNotTouch/DESeq2/deseq2.sh $1 $2 $3 $4 $5 $6 $7
 
