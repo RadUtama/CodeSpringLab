@@ -3,6 +3,7 @@
 #SBATCH --mem-per-cpu=1G
 #SBATCH --cpus-per-task=8
 #SBATCH --export=NONE
+#SBATCH --time=2-00:00:00
 
 source ../scripts_DoNotTouch/RSEM/RSEM_PE.sh $1 $2 $3 $4 $5 $6
 
