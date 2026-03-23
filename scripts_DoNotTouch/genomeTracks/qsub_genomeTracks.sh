@@ -2,6 +2,7 @@
 #SBATCH --job-name=genomeTracks
 #SBATCH --mem-per-cpu=5G
 #SBATCH --cpus-per-task=4
+#SBATCH --time=2-00:00:00
 
 source ../scripts_DoNotTouch/genomeTracks/genomeTracks.sh $1 $2 $3 $4 $5 $6
 
