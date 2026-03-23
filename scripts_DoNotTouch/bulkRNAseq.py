@@ -1017,10 +1017,6 @@ def gseapy_PrepDirect():
     outpath_pathway = res_dir+project_name+"/data/gseapy/"+compared+'_vs_'+refcond+"/"
     os.makedirs(outpath_pathway,exist_ok=True)
     print("GSEApy results are stored in "+res_dir+project_name+"/data/gseapy/"+compared+'_vs_'+refcond+"/")
-    
-    outpath_pathway = "../../csl_results/"+project_name+"/data/gseapy/"
-    os.makedirs(outpath_pathway,exist_ok=True)
-    print("GSEApy results are stored in ../../csl_results/"+project_name+"/data/gseapy/")
 
     print("========================================")
     print("Specify genome:(e.g human, mouse, etc)")
