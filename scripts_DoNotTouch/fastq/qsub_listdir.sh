@@ -2,6 +2,7 @@
 #SBATCH --job-name=listDir
 #SBATCH --mem-per-cpu=1G
 #SBATCH --cpus-per-task=1
+#SBATCH --time=2-00:00:00
 
 source ../scripts_DoNotTouch/fastq/listdir.sh $1
 
