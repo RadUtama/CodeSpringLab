@@ -1,5 +1,5 @@
 <p align="center">
-   <img src="./scripts_DoNotTouch/Logo_CSL.png" width="300" />
+   <img src="./scripts_DoNotTouch/Logo_CSL.png" width="400" />
 </p>
 
 # CodeSpringLab
@@ -9,22 +9,8 @@ Collection of bioinformatics pipelines and scripts for Cold Spring Harbor Labora
 1. Bulk RNA-seq:
 
 <p align="center">
-   <img src="./scripts_DoNotTouch/flowchart.png" width="300" />
+   <img src="./scripts_DoNotTouch/flowchart.png" width="600" />
 </p>
-   
-   FastQC and fastq-screen
-   
-   Cutadapt
-   
-   STAR and Kallisto
-   
-   featureCounts and RSEM
-   
-   DESeq2
-   
-   GSEApy
-   
-   PCA, Heatmap, Volcano, and MA plots
 
 2. Bulk ATAC-seq:
 
