@@ -1,5 +1,5 @@
 module load EBModules
-module load RSeQC
+module load RSeQC/4.0.0-foss-2021b
 
 #/grid/bsr/home/utama/.local/bin/infer_experiment.py -r $5 -i $1 > $4_strand.txt
 infer_experiment.py -r $5 -i $1 > $4_strand.txt
