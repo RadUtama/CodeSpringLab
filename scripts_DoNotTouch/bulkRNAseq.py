@@ -131,7 +131,7 @@ def filetransfer_Prep():
         
     global project_name
     global param
-global res_dir
+    global res_dir
     
     os.makedirs(res_dir+project_name+"/data/",exist_ok=True)
     #os.makedirs(res_dir+project_name+"/data/manifest/",exist_ok=True)
