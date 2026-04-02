@@ -85,7 +85,7 @@ awk '( $1 ~ /^chr/ && $1 != "chrM" && $1 != "chrUn" )' ${1}Aligned.sortedByCoord
 rm ${1}Aligned.sortedByCoord.out.bdg
 
 # The third line is chromsize in macs2 step
-/grid/bsr/home/utama/bin/x86_64/bedGraphToBigWig \
+/grid/bsr/data/data/utama/tools/bin/x86_64/bedGraphToBigWig \
 ${1}Aligned.sortedByCoord_filtered.out.bdg \
 ${6} \
 ${1}Aligned.sortedByCoord.out.bw
