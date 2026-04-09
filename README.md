@@ -4,7 +4,8 @@
 
 # CodeSpringLab
 Collection of bioinformatics pipelines and scripts for Cold Spring Harbor Laboratory created by BSR (Bioinformatics shared resources)
-Created by Raditya Utama, Alex Dobin, and James Rouse (Bioinformatics Shared Resources/BSR)
+Created by Raditya Utama, Alex Dobin, and James Rouse
+
 First release: March 2023
 
 # Highlights
