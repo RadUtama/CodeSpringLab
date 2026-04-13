@@ -191,6 +191,7 @@ def filetransfer_Prep():
         conf = open("../scripts_DoNotTouch/config.py", "w")
         conf.write("project_name="+"'"+project_name+"'"+"\n")
         conf.write("parameters_exist="+"'"+param+"'"+"\n")
+        conf.write("results_directory="+"'"+res_dir+"'"+"\n")
         conf.write("read_path_original="+"'"+read_path_original+"'"+"\n")
         conf.write("read_path_destination="+"'"+read_path_destination+"'"+"\n")
         conf.write("genome="+"'"+genome+"'"+"\n")
