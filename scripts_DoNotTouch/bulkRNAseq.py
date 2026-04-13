@@ -624,7 +624,7 @@ def star_ListDir(directory):
     
     return log_matrix
 
-def kallisto_Prep(genome,pairing,read_dir):
+def kallisto_Prep(genome,pairing,read_dir,inpath_design):
         
     global project_name
     global res_dir
@@ -639,10 +639,18 @@ def kallisto_Prep(genome,pairing,read_dir):
     if usetrim == 'y':
         read_dir = res_dir+project_name+"/data/cutadapt/"
     print("========================================")
-    
-    prefix = pd.Series(os.listdir(read_dir))
-    prefix = prefix[prefix.str.endswith('fastq.gz')]
-    prefix = prefix.str.replace('_R1_001.fastq.gz','',regex=False).str.replace('_R2_001.fastq.gz','',regex=False).unique()
+
+    des = pd.read_table(inpath_design+"/design_matrix.txt")
+    prefix = des.iloc[:,0]
+    prefix = pd.Series(prefix)
+    prefix_filename = des.iloc[:,len(des.columns)-1]   
+    prefix_filename = prefix_filename.str.replace('_R1_001.fastq.gz','',regex=False)
+    prefix_filename = [x.split(",")[0] if "," in x else x for x in prefix_filename]
+    prefix_filename = pd.Series(prefix_filename)
+
+    #prefix = pd.Series(os.listdir(read_dir))
+    #prefix = prefix[prefix.str.endswith('fastq.gz')]
+    #prefix = prefix.str.replace('_R1_001.fastq.gz','',regex=False).str.replace('_R2_001.fastq.gz','',regex=False).unique()
     
     out_dir_kal = res_dir+project_name+"/data/kallisto/"
    
@@ -656,8 +664,11 @@ def kallisto_Prep(genome,pairing,read_dir):
     elif genome == 'human':
         genome_index_path = "/grid/bsr/data/data/utama/genome/hg38_p13_gencode/gencode.v45.transcripts.idx"
     
-    read1_list = read_dir+'/'+prefix+'_R1_001.fastq.gz'
-    read2_list = read_dir+'/'+prefix+'_R2_001.fastq.gz'
+    #read1_list = read_dir+'/'+prefix+'_R1_001.fastq.gz'
+    #read2_list = read_dir+'/'+prefix+'_R2_001.fastq.gz'
+    #out_prefix_list = out_dir_kal+prefix+'/'
+    read1_list = read_dir+'/'+prefix_filename+'_R1_001.fastq.gz'
+    read2_list = read_dir+'/'+prefix_filename+'_R2_001.fastq.gz'
     out_prefix_list = out_dir_kal+prefix+'/'
     
     if pairing == 'y':
