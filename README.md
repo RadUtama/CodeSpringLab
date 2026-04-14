@@ -22,21 +22,9 @@ First release: March 2023
 </p>
 
 3. Bulk ChIP-seq:
-
-![Bulk ChIP-seq](./scripts_DoNotTouch/flowchart_chip.png)
-
-   FastQC and fastq-screen
    
-   Cutadapt
-   
-   Bowtie2
-   
-   MACS2
-   
-   DiffBind
-   
-   Homer, Picard, SAMtools, and deepTools
-   
-   Profile map, PCA, Heatmap, Volcano, and Box plots
+<p align="center">
+   <img src="./scripts_DoNotTouch/flowchart_chip.png" width="600" />
+</p>
    
    
